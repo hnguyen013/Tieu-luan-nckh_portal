@@ -1,0 +1,247 @@
+/* Layout chung */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    color: #ffffff;
+}
+
+.container {
+    width: 1200px;
+    max-width: 96%;
+    margin: 0 auto;
+}
+
+/* HEADER */
+.main-header {
+    background: #332D56; /* đổi từ #14213d -> #332D56 */
+    height: 70px;
+    display: flex;
+    align-items: center;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo span {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.main-nav {
+    display: flex;
+    gap: 24px;
+}
+
+.nav-item {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 14px;
+    transition: background 0.2s, color 0.2s;
+}
+
+/* Không còn button trắng mặc định, chỉ khi hover */
+.nav-item:hover {
+    background: #ffffff;
+    color: #332D56;
+}
+
+/* có thể dùng sau nếu muốn đánh dấu trang hiện tại
+.nav-item.active {
+    background: #ffffff;
+    color: #332D56;
+    font-weight: bold;
+}
+*/
+
+.header-actions .btn-login {
+    padding: 8px 20px;
+    border-radius: 999px;
+    background: #6E8CFB; /* đổi từ hồng sang xanh */
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.header-actions .btn-login:hover {
+    background: #5268d0; /* màu hover đậm hơn */
+    transform: translateY(-1px);
+}
+
+/* HERO */
+.hero {
+    position: relative;
+    min-height: 480px;
+    background-color: #0C2B4E; /* nền mới */
+    background-size: cover;
+    background-position: center;
+    color: #ffffff;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25); /* lớp tối nhẹ, vẫn thấy nền #0C2B4E */
+}
+
+.hero-content {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    padding: 70px 0;
+    z-index: 1;
+}
+
+/* BÊN TRÁI */
+.hero-left {
+    max-width: 55%;
+}
+
+.hero-title {
+    font-size: 32px;
+    line-height: 1.4;
+    margin-bottom: 40px;
+}
+
+.title-line-1 {
+    color: #F4F4F4;  /* dòng 1 */
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.title-line-2 {
+    color: #6E8CFB; /* dòng 2 */
+    font-weight: 700;
+}
+
+/* Các ô thống kê */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 32px;
+}
+
+/* để cả box click được */
+.stat-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.stat-link:hover .stat-label {
+    text-decoration: underline;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #6E8CFB; /* đổi từ hồng sang xanh */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.stat-info {
+    font-size: 14px;
+}
+
+.stat-label {
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.stat-value {
+    margin-top: 4px;
+    opacity: 0.85;
+}
+
+/* BÊN PHẢI – SEARCH BOX */
+.hero-right {
+    max-width: 35%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.search-card {
+    background: #ffffff;
+    color: #333333;
+    padding: 30px;
+    width: 100%;
+    max-width: 360px;
+    border-radius: 4px;
+}
+
+.search-card h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+.search-card .highlight {
+    color: #6E8CFB; /* thay vì hồng */
+}
+
+.search-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.search-card input {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.search-card button {
+    padding: 10px 12px;
+    border-radius: 3px;
+    border: none;
+    background: #6E8CFB; /* nút xanh */
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.search-card button:hover {
+    background: #5268d0; /* hover đậm hơn */
+}
+
+/* Responsive nhẹ */
+@media (max-width: 900px) {
+    .hero-content {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .hero-left,
+    .hero-right {
+        max-width: 100%;
+    }
+
+    .hero-right {
+        justify-content: flex-start;
+    }
+}

@@ -1,0 +1,73 @@
+{% extends "portal/admin_base.html" %}
+
+{% block title %}Quản lý tài khoản{% endblock %}
+{% block menu_accounts_active %} active{% endblock %}
+{% block page_header %}Quản lý tài khoản{% endblock %}
+{% block breadcrumb %}Trang chủ / Quản lý tài khoản{% endblock %}
+
+{% block content %}
+    {% if messages %}
+        <ul class="message-list">
+            {% for m in messages %}
+                <li class="message {{ m.tags }}">{{ m }}</li>
+            {% endfor %}
+        </ul>
+        <hr style="margin: 10px 0;">
+    {% endif %}
+
+    <div class="list-header">
+        <h2>Danh sách tài khoản</h2>
+        <a href="{% url 'portal:admin-account-create' %}" class="btn-primary">
+            + Tạo tài khoản mới
+        </a>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Tên đăng nhập</th>
+            <th>Email</th>
+            <th>Staff</th>
+            <th>Superuser</th>
+            <th>Hoạt động</th>
+            <th>Thao tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for u in users %}
+            <tr>
+                <td>{{ u.username }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.is_staff|yesno:"Có,Không" }}</td>
+                <td>{{ u.is_superuser|yesno:"Có,Không" }}</td>
+                <td>
+                    {% if u.is_active %}
+                        <span class="badge badge-success">Đang hoạt động</span>
+                    {% else %}
+                        <span class="badge badge-danger">Đã khóa</span>
+                    {% endif %}
+                </td>
+                <td class="actions">
+                    <a href="{% url 'portal:admin-account-edit' u.id %}">Sửa</a>
+                    |
+                    <a href="{% url 'portal:admin-account-reset-password' u.id %}">
+                        Đặt lại mật khẩu
+                    </a>
+                    |
+                    {% if u != request.user %}
+                        <a href="{% url 'portal:admin-account-toggle-active' u.id %}">
+                            {% if u.is_active %}Khóa{% else %}Mở khóa{% endif %}
+                        </a>
+                    {% else %}
+                        <span class="muted">(Không thể khóa chính mình)</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="6">Chưa có tài khoản nào.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

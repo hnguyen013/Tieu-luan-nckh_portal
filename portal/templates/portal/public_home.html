@@ -1,0 +1,111 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đề tài nghiên cứu khoa học - SV ĐHSP Huế</title>
+
+    <link rel="stylesheet" href="{% static 'portal/css/public_home.css' %}">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="main-header">
+        <div class="container header-inner">
+            <div class="logo">
+                <span>NCKH Portal</span>
+            </div>
+            <nav class="main-nav">
+                <a href="{% url 'portal:public-home' %}" class="nav-item">Trang chủ</a>
+                <a href="#" class="nav-item">Sinh viên</a>
+                <a href="#" class="nav-item">Giảng viên hướng dẫn</a>
+                <a href="#" class="nav-item">Đề tài khoa học</a>
+                <a href="#" class="nav-item">Thống kê</a>
+            </nav>
+            <div class="header-actions">
+                <a href="{% url 'portal:admin-dashboard' %}" class="btn-login">Đăng nhập</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <!-- Bên trái: tiêu đề + các box thống kê -->
+            <div class="hero-left">
+                <h1 class="hero-title">
+                    <span class="title-line-1">Đề tài nghiên cứu khoa học</span><br>
+                    <span class="title-line-2">Sinh viên trường ĐH Sư phạm, ĐH Huế</span>
+                </h1>
+
+                <div class="stats-grid">
+                    <!-- DỮ LIỆU SINH VIÊN -->
+                    <a href="#" class="stat-link">
+                        <div class="stat-item">
+                            <div class="stat-icon">🎓</div>
+                            <div class="stat-info">
+                                <div class="stat-label">DỮ LIỆU SINH VIÊN</div>
+                                <div class="stat-value">
+                                    {{ student_count|default:0 }} Kết quả
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- DỮ LIỆU GIẢNG VIÊN HƯỚNG DẪN -->
+                    <a href="#" class="stat-link">
+                        <div class="stat-item">
+                            <div class="stat-icon">👨‍🏫</div>
+                            <div class="stat-info">
+                                <div class="stat-label">DỮ LIỆU GIẢNG VIÊN HƯỚNG DẪN</div>
+                                <div class="stat-value">
+                                    {{ lecturer_count|default:0 }} Kết quả
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- DỮ LIỆU BÀI BÁO KHOA HỌC -->
+                    <a href="#" class="stat-link">
+                        <div class="stat-item">
+                            <div class="stat-icon">📄</div>
+                            <div class="stat-info">
+                                <div class="stat-label">DỮ LIỆU BÀI BÁO KHOA HỌC</div>
+                                <div class="stat-value">
+                                    {{ paper_count|default:0 }} Kết quả
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- DỮ LIỆU ĐỀ TÀI KHOA HỌC -->
+                    <a href="#" class="stat-link">
+                        <div class="stat-item">
+                            <div class="stat-icon">💡</div>
+                            <div class="stat-info">
+                                <div class="stat-label">DỮ LIỆU ĐỀ TÀI KHOA HỌC</div>
+                                <div class="stat-value">
+                                    {{ project_count|default:0 }} Kết quả
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bên phải: khung tìm kiếm -->
+            <div class="hero-right">
+                <div class="search-card">
+                    <h2>Tìm Kiếm <span class="highlight">Dữ Liệu</span></h2>
+                    <form method="get" action="{% url 'portal:public-home' %}">
+                        <input type="text" name="q" placeholder="Nhập từ khóa..." />
+                        <button type="submit">Tìm kiếm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

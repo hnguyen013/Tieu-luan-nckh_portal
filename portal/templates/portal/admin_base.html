@@ -1,0 +1,109 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Bảng điều khiển quản trị{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'portal/css/admin.css' %}">
+</head>
+<body>
+<div class="admin-layout">
+
+    <!-- TOP BAR -->
+    <header class="admin-topbar">
+        <div class="topbar-left">
+            <div class="topbar-logo">NCKH Admin</div>
+            <div class="topbar-subtitle">
+                Hệ thống quản lý đề tài NCKH sinh viên – ĐH Sư phạm, ĐH Huế
+            </div>
+        </div>
+        <div class="topbar-right">
+            <div class="user-info">
+                <span class="user-avatar">
+                    {{ request.user.username|first|default:"U" }}
+                </span>
+                <div class="user-text">
+                    <div class="user-name">{{ request.user.username }}</div>
+                    <div class="user-role">Quản trị hệ thống</div>
+                </div>
+            </div>
+            <a href="{% url 'portal:logout' %}" class="btn-logout">
+                Đăng xuất
+            </a>
+        </div>
+    </header>
+    
+{% if messages %}
+<div class="admin-messages">
+    {% for message in messages %}
+        <div class="admin-message {{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+    <!-- MAIN AREA -->
+    <div class="admin-main">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar">
+            <nav class="sidebar-nav">
+                <a href="{% url 'portal:admin-dashboard' %}"
+                   class="sidebar-item{% block menu_dashboard_active %}{% endblock %}">
+                    <span class="sidebar-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+
+                    <a href="{% url 'portal:admin-account-list' %}"
+                    class="sidebar-item{% block menu_accounts_active %}{% endblock %}">
+                    <span class="sidebar-icon">👥</span>
+                    <span>Quản lý tài khoản</span>
+                </a>
+                <a href="#"
+                   class="sidebar-item{% block menu_students_active %}{% endblock %}">
+                    <span class="sidebar-icon">🎓</span>
+                    <span>Sinh viên</span>
+                </a>
+
+                <a href="#"
+                   class="sidebar-item{% block menu_lecturers_active %}{% endblock %}">
+                    <span class="sidebar-icon">👨‍🏫</span>
+                    <span>Giảng viên hướng dẫn</span>
+                </a>
+
+                <a href="#"
+                   class="sidebar-item{% block menu_projects_active %}{% endblock %}">
+                    <span class="sidebar-icon">💡</span>
+                    <span>Đề tài khoa học</span>
+                </a>
+
+                <a href="#"
+                   class="sidebar-item{% block menu_stats_active %}{% endblock %}">
+                    <span class="sidebar-icon">📈</span>
+                    <span>Thống kê</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- CONTENT -->
+        <main class="admin-content">
+            <div class="content-header">
+                <h1 class="page-title">
+                    {% block page_header %}Bảng điều khiển{% endblock %}
+                </h1>
+                <div class="page-breadcrumb">
+                    {% block breadcrumb %}Trang chủ / Dashboard{% endblock %}
+                </div>
+            </div>
+
+            <div class="content-body">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

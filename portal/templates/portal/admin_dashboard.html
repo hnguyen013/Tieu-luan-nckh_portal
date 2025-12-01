@@ -1,0 +1,36 @@
+{% extends "portal/admin_base.html" %}
+
+{% block title %}Dashboard quản trị{% endblock %}
+
+{% block menu_dashboard_active %} active{% endblock %}
+{% block page_header %}Dashboard quản trị{% endblock %}
+{% block breadcrumb %}Trang chủ / Dashboard{% endblock %}
+
+{% block content %}
+    <div class="dashboard-grid">
+        <div class="dash-card">
+            <div class="dash-card-label">Tổng số sinh viên</div>
+            <div class="dash-card-value">{{ student_count|default:0 }}</div>
+        </div>
+
+        <div class="dash-card">
+            <div class="dash-card-label">Tổng số giảng viên hướng dẫn</div>
+            <div class="dash-card-value">{{ lecturer_count|default:0 }}</div>
+        </div>
+
+        <div class="dash-card">
+            <div class="dash-card-label">Tổng số đề tài NCKH</div>
+            <div class="dash-card-value">{{ project_count|default:0 }}</div>
+        </div>
+
+        <div class="dash-card">
+            <div class="dash-card-label">Tổng số bài báo khoa học</div>
+            <div class="dash-card-value">{{ paper_count|default:0 }}</div>
+        </div>
+    </div>
+
+    <div class="dash-section">
+        <h2>Hoạt động gần đây</h2>
+        <p>Chưa có dữ liệu. Sau này sẽ hiển thị log cập nhật đề tài, tài khoản, v.v.</p>
+    </div>
+{% endblock %}
