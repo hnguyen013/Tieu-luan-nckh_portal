@@ -17,7 +17,7 @@
             </div>
             <nav class="main-nav">
                 <a href="{% url 'portal:public-home' %}" class="nav-item">Trang chủ</a>
-                <a href="#" class="nav-item">Sinh viên</a>
+                <a href="{% url 'portal:public-student-list' %}" class="nav-item">Sinh viên</a>
                 <a href="#" class="nav-item">Giảng viên hướng dẫn</a>
                 <a href="#" class="nav-item">Đề tài khoa học</a>
                 <a href="#" class="nav-item">Thống kê</a>
@@ -41,7 +41,7 @@
 
                 <div class="stats-grid">
                     <!-- DỮ LIỆU SINH VIÊN -->
-                    <a href="#" class="stat-link">
+                    <a href="{% url 'portal:public-student-list' %}" class="stat-link">
                         <div class="stat-item">
                             <div class="stat-icon">🎓</div>
                             <div class="stat-info">

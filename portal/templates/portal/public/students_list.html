@@ -1,0 +1,131 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Dữ liệu sinh viên - Đề tài nghiên cứu khoa học</title>
+
+    <link rel="stylesheet" href="{% static 'portal/css/public_home.css' %}">
+</head>
+<body>
+    <!-- HEADER: giữ nguyên như public_home -->
+    <header class="main-header">
+        <div class="container header-inner">
+            <div class="logo">
+                <span>NCKH Portal</span>
+            </div>
+            <nav class="main-nav">
+                <a href="{% url 'portal:public-home' %}" class="nav-item">Trang chủ</a>
+                <a href="{% url 'portal:public-student-list' %}" class="nav-item">Sinh viên</a>
+                <a href="#" class="nav-item">Giảng viên hướng dẫn</a>
+                <a href="#" class="nav-item">Đề tài khoa học</a>
+                <a href="#" class="nav-item">Thống kê</a>
+            </nav>
+            <div class="header-actions">
+                <a href="{% url 'portal:admin-dashboard' %}" class="btn-login">Đăng nhập</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- PHẦN 1: HERO + KHUNG LỌC -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <!-- Bên trái: tiêu đề -->
+            <div class="hero-left">
+                <h1 class="hero-title">
+                    <span class="title-line-1">Dữ liệu sinh viên</span><br>
+                    <span class="title-line-2">Sinh viên tham gia đề tài NCKH</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Lọc theo khóa học và từ khóa để tìm nhanh sinh viên trong toàn trường.
+                </p>
+            </div>
+
+            <!-- Bên phải: khung lọc sinh viên -->
+            <div class="hero-right">
+                <div class="search-card">
+                    <h2>Lọc <span class="highlight">Sinh viên</span></h2>
+                    <form method="get" action="{% url 'portal:public-student-list' %}">
+                        <!-- KHÓA HỌC -->
+                        <select name="course_id">
+                            <option value="">Chọn khóa học</option>
+                            {% for c in course_list %}
+                                <option value="{{ c.id }}" {% if c.id|stringformat:"s" == course_id %}selected{% endif %}>
+                                    {{ c.code }} - {{ c.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        
+                        <select name="faculty_id">
+                            <option value="">Chọn khoa</option>
+                            {% for f in faculty_list %}
+                                <option value="{{ f.id }}" {% if f.id|stringformat:"s" == faculty_id %}selected{% endif %}>
+                                    {{ f.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+
+                        <input type="text"
+                               name="q"
+                               placeholder="Từ khóa tìm kiếm"
+                               value="{{ q }}"/>
+
+                        <button type="submit">Tìm kiếm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PHẦN 2: KẾT QUẢ TÌM KIẾM -->
+    <section class="students-section">
+        <div class="container">
+            <div class="results-header">
+                <h2 class="results-title">Dữ liệu sinh viên</h2>
+                <div class="results-count">
+                    {{ students|length }} KẾT QUẢ
+                </div>
+            </div>
+
+            <div class="student-grid">
+                {% for s in students %}
+                    <a href="{% url 'portal:public-student-detail' s.mssv %}"
+                       class="student-card">
+                        <div class="student-avatar">
+                            <!-- Có thể thay bằng ảnh thật sau này -->
+                            <span class="avatar-placeholder">👤</span>
+                        </div>
+                        <div class="student-info">
+                            <h3 class="student-name">{{ s.full_name }}</h3>
+                            <div class="student-meta">
+                                <span class="label">MSSV:</span> {{ s.mssv }}
+                            </div>
+                            <div class="student-meta">
+                                <span class="label">Lớp:</span> {{ s.class_name }}
+                            </div>
+                            <div class="student-meta">
+                                <span class="label">Ngành:</span> {{ s.major }}
+                            </div>
+                            <div class="student-meta">
+                                <span class="label">Khoa:</span> {{ s.faculty.name }}
+
+                            </div>
+                            {% if s.email %}
+                            <div class="student-meta">
+                                <span class="label">Email:</span> {{ s.email }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </a>
+                {% empty %}
+                    <p>Chưa có sinh viên nào trong hệ thống.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

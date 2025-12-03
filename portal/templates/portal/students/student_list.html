@@ -1,0 +1,107 @@
+{% extends "portal/admin_base.html" %}
+
+{% block title %}Danh sách sinh viên{% endblock %}
+{% block menu_students_active %} active{% endblock %}
+{% block page_header %}Quản lý sinh viên{% endblock %}
+{% block breadcrumb %}Trang chủ / Sinh viên{% endblock %}
+
+{% block content %}
+
+    {% if messages %}
+        <div class="admin-messages">
+            {% for message in messages %}
+                <div class="admin-message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="list-header">
+        <h2>Danh sách sinh viên</h2>
+        <a href="{% url 'portal:admin-student-create' %}" class="btn-primary">
+            + Thêm sinh viên
+        </a>
+    </div>
+
+    <form method="get" class="form-inline" style="margin-bottom: 12px;">
+
+        <input type="text"
+               name="q"
+               placeholder="Tìm MSSV / Họ tên / Lớp / Khoa"
+               value="{{ q }}"
+               style="min-width: 260px; margin-right: 8px;">
+
+        <input type="text"
+               name="faculty"
+               placeholder="Khoa"
+               value="{{ faculty }}"
+               style="width: 160px; margin-right: 8px;">
+
+        <input type="text"
+               name="class_name"
+               placeholder="Lớp"
+               value="{{ class_name }}"
+               style="width: 140px; margin-right: 8px;">
+
+        <label style="margin-right: 8px; font-size: 13px;">
+            <input type="checkbox"
+                   name="include_inactive"
+                   value="1"
+                   {% if include_inactive %}checked{% endif %}>
+            Hiển thị cả sinh viên ngừng sử dụng
+        </label>
+
+        <button type="submit" class="btn-secondary">Lọc</button>
+    </form>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>MSSV</th>
+            <th>Họ tên</th>
+            <th>Năm sinh</th>
+            <th>Giới tính</th>
+            <th>Lớp</th>
+            <th>Ngành</th>
+            <th>Khoa</th>
+            <th>Email</th>
+            <th>Trạng thái</th>
+            <th style="width: 150px;">Thao tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for s in students %}
+            <tr>
+                <td>{{ s.mssv }}</td>
+                <td>{{ s.full_name }}</td>
+                <td>{{ s.year_of_birth }}</td>
+                <td>
+                    {% if s.gender == "M" %}Nam{% elif s.gender == "F" %}Nữ{% else %}Khác{% endif %}
+                </td>
+                <td>{{ s.class_name }}</td>
+                <td>{{ s.major }}</td>
+                <td>{{ s.faculty.name }}</td>
+                <td>{{ s.email }}</td>
+                <td>
+                    {% if s.is_active %}
+                        <span class="badge badge-success">Đang theo dõi</span>
+                    {% else %}
+                        <span class="badge badge-danger">Ngừng sử dụng</span>
+                    {% endif %}
+                </td>
+                <td class="actions">
+                    <a href="{% url 'portal:admin-student-edit' s.id %}">Sửa</a>
+                    |
+                    <a href="{% url 'portal:admin-student-toggle-active' s.id %}">
+                        {% if s.is_active %}Ngừng sử dụng{% else %}Kích hoạt{% endif %}
+                    </a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="10">Chưa có sinh viên nào trong hệ thống.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

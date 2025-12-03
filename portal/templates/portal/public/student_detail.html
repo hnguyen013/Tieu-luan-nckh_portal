@@ -1,0 +1,144 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ sơ sinh viên {{ student.full_name }} - Đề tài NCKH</title>
+    <link rel="stylesheet" href="{% static 'portal/css/public_home.css' %}">
+</head>
+<body class="public-page">
+<header class="site-header">
+    <div class="container header-container">
+        <div class="logo">
+            <a href="{% url 'portal:public-home' %}">
+                <span class="logo-main">Đề tài nghiên cứu khoa học</span>
+                <span class="logo-sub">Sinh viên trường ĐH Sư phạm, ĐH Huế</span>
+            </a>
+        </div>
+        <nav class="main-nav">
+            <ul class="nav-links">
+                <li><a href="{% url 'portal:public-home' %}">Trang chủ</a></li>
+                <li><a href="{% url 'portal:public-student-list' %}">Sinh viên</a></li>
+                <li><a href="#">Giảng viên hướng dẫn</a></li>
+                <li><a href="#">Đề tài khoa học</a></li>
+                <li><a href="#">Thống kê</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <a href="{% url 'portal:login' %}" class="btn-login">Đăng nhập</a>
+        </div>
+    </div>
+</header>
+
+<main class="main-content">
+    <section class="section container student-profile-section">
+        <a href="{% url 'portal:public-student-list' %}" class="link-back">
+            ← Quay lại danh sách sinh viên
+        </a>
+
+        <div class="student-profile-card">
+            <div class="student-profile-left">
+                {% if student.avatar %}
+                    <div class="student-avatar">
+                        <img src="{{ student.avatar.url }}" alt="Ảnh sinh viên {{ student.full_name }}">
+                    </div>
+                {% else %}
+                    <div class="student-avatar placeholder">
+                        <span>{{ student.full_name|slice:":1" }}</span>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="student-profile-right">
+                <h1 class="student-name">{{ student.full_name }}</h1>
+                <p class="student-mssv">MSSV: <strong>{{ student.mssv }}</strong></p>
+
+                <div class="student-info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Lớp</span>
+                        <span class="info-value">{{ student.class_name|default:"—" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ngành</span>
+                        <span class="info-value">{{ student.major|default:"—" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Khoa</span>
+                        <span class="info-value">{{ student.faculty|default:"—" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Năm sinh</span>
+                        <span class="info-value">{{ student.year_of_birth|default:"—" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Giới tính</span>
+                        <span class="info-value">
+                            {% if student.gender == "M" %}Nam{% elif student.gender == "F" %}Nữ{% elif student.gender == "O" %}Khác{% else %}—{% endif %}
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">
+                            {% if student.email %}
+                                <a href="mailto:{{ student.email }}">{{ student.email }}</a>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="student-projects-section">
+            <h2 class="section-title">Danh sách đề tài tham gia</h2>
+            <p class="section-subtitle">
+                Thống kê các đề tài nghiên cứu khoa học mà sinh viên đã tham gia.
+            </p>
+
+            <div class="table-wrapper">
+                <table class="table table-public">
+                    <thead>
+                    <tr>
+                        <th>Mã đề tài</th>
+                        <th>Tên đề tài</th>
+                        <th>Vai trò</th>
+                        <th>Năm học</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for p in projects %}
+                        <tr>
+                            <td>{{ p.code }}</td>
+                            <td>
+                                <a href="#">
+                                    {{ p.title }}
+                                </a>
+                            </td>
+                            <td>{{ p.role_display }}</td>
+                            <td>{{ p.academic_year }}</td>
+                            <td>{{ p.status_display }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                Chưa có dữ liệu đề tài cho sinh viên này
+                                (chức năng sẽ được bổ sung khi hoàn thiện module Đề tài).
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-container">
+        <p>&copy; {{ now|default:"" }} Cơ sở dữ liệu đề tài NCKH - Trường ĐH Sư phạm, ĐH Huế</p>
+    </div>
+</footer>
+</body>
+</html>
