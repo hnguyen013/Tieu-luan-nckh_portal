@@ -26,21 +26,27 @@
 
         <input type="text"
                name="q"
-               placeholder="Tìm MSSV / Họ tên / Lớp / Khoa"
+               placeholder="Tìm MSSV / Họ tên / Lớp"
                value="{{ q }}"
                style="min-width: 260px; margin-right: 8px;">
 
-        <input type="text"
-               name="faculty"
-               placeholder="Khoa"
-               value="{{ faculty }}"
-               style="width: 160px; margin-right: 8px;">
+        <select name="faculty">
+            <option value="">— Chọn khoa —</option>
+            {% for f in faculties %}
+                <option value="{{ f.id }}" {% if faculty == f.id|stringformat:"s" %}selected{% endif %}>
+                    {{ f.name }}
+                </option>
+            {% endfor %}
+        </select>
 
-        <input type="text"
-               name="class_name"
-               placeholder="Lớp"
-               value="{{ class_name }}"
-               style="width: 140px; margin-right: 8px;">
+        <select name="course">
+            <option value="">— Chọn khóa học —</option>
+            {% for c in courses %}
+                <option value="{{ c.id }}" {% if course == c.id|stringformat:"s" %}selected{% endif %}>
+                    {{ c.code }}
+            </option>
+            {% endfor %}
+        </select>
 
         <label style="margin-right: 8px; font-size: 13px;">
             <input type="checkbox"
