@@ -74,9 +74,17 @@ WSGI_APPLICATION = 'nckh_portal.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "nckh_portal",      # tên database bạn đã tạo trong MySQL
+        "USER": "root",             # user MySQL (thường là root nếu bạn để mặc định)
+        "PASSWORD": "123369",  # đổi lại cho đúng
+        "HOST": "127.0.0.1",        # hoặc "localhost"
+        "PORT": "3306",             # port mặc định của MySQL
+        "OPTIONS": {
+            "charset": "utf8mb4",
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
