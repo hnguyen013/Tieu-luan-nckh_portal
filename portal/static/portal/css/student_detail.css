@@ -1,0 +1,102 @@
+/* ===== Student Detail Page ===== */
+
+.student-detail-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 16px;
+}
+
+/* CARD CHÍNH */
+.student-detail-card {
+    display: flex;
+    gap: 40px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* AVATAR */
+.student-detail-avatar {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f2f2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.student-detail-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    font-size: 80px;
+    color: #999;
+}
+
+/* INFO */
+.student-detail-info h1 {
+    font-size: 30px;
+    color: #d60000;
+    margin-bottom: 6px;
+}
+
+.student-role {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.student-meta {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.student-meta li {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+/* BACK LINK */
+.back-link {
+    display: inline-block;
+    margin-top: 24px;
+    text-decoration: none;
+    color: #1e3a8a;
+    font-weight: 600;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* TOPICS */
+.student-topics {
+    margin-top: 40px;
+}
+
+.student-topics h2 {
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.text-muted {
+    color: #666;
+    font-size: 15px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .student-detail-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}

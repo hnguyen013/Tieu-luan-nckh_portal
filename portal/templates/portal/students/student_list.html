@@ -7,14 +7,6 @@
 
 {% block content %}
 
-    {% if messages %}
-        <div class="admin-messages">
-            {% for message in messages %}
-                <div class="admin-message {{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
     <div class="list-header">
         <h2>Danh sách sinh viên</h2>
         <a href="{% url 'portal:admin-student-create' %}" class="btn-primary">

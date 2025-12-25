@@ -82,50 +82,52 @@
 
     <!-- PHẦN 2: KẾT QUẢ TÌM KIẾM -->
     <section class="students-section">
-        <div class="container">
-            <div class="results-header">
-                <h2 class="results-title">Dữ liệu sinh viên</h2>
-                <div class="results-count">
-                    {{ students|length }} KẾT QUẢ
-                </div>
-            </div>
-
-            <div class="student-grid">
-                {% for s in students %}
-                    <a href="{% url 'portal:public-student-detail' s.mssv %}"
-                       class="student-card">
-                        <div class="student-avatar">
-                            <!-- Có thể thay bằng ảnh thật sau này -->
-                            <span class="avatar-placeholder">👤</span>
-                        </div>
-                        <div class="student-info">
-                            <h3 class="student-name">{{ s.full_name }}</h3>
-                            <div class="student-meta">
-                                <span class="label">MSSV:</span> {{ s.mssv }}
-                            </div>
-                            <div class="student-meta">
-                                <span class="label">Lớp:</span> {{ s.class_name }}
-                            </div>
-                            <div class="student-meta">
-                                <span class="label">Ngành:</span> {{ s.major }}
-                            </div>
-                            <div class="student-meta">
-                                <span class="label">Khoa:</span> {{ s.faculty.name }}
-
-                            </div>
-                            {% if s.email %}
-                            <div class="student-meta">
-                                <span class="label">Email:</span> {{ s.email }}
-                            </div>
-                            {% endif %}
-                        </div>
-                    </a>
-                {% empty %}
-                    <p>Chưa có sinh viên nào trong hệ thống.</p>
-                {% endfor %}
+    <div class="container">
+        <div class="results-header">
+            <h2 class="results-title">Dữ liệu sinh viên</h2>
+            <div class="results-count">
+                {{ students|length }} KẾT QUẢ<br>
             </div>
         </div>
-    </section>
+
+        <div class="student-grid">
+            {% for s in students %}
+            <div class="student-card">
+                <div class="student-card-inner">
+                    <div class="student-avatar">
+                        {% if s.avatar %}
+                            <img src="{{ s.avatar.url }}" alt="{{ s.full_name }}">
+                        {% else %}
+                            <span class="avatar-placeholder">👤</span>
+                        {% endif %}
+                    </div>
+
+                    <h3 class="student-name">{{ s.full_name }}</h3>
+                    <p class="student-role">Sinh viên</p>
+
+                    <div class="student-info">
+                        <p><strong>MSSV:</strong> {{ s.mssv }}</p>
+                        <p><strong>Lớp:</strong> {{ s.class_name }}</p>
+                        <p><strong>Ngành:</strong> {{ s.major }}</p>
+                        <p><strong>Khoa:</strong> {{ s.faculty.name }}</p>
+                        {% if s.email %}
+                        <p><strong>Email:</strong> {{ s.email }}</p>
+                        {% endif %}
+                    </div>
+
+                    <a href="{% url 'portal:public-student-detail' s.mssv %}"
+                       class="btn-detail">
+                        Xem chi tiết
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+                <p>Chưa có sinh viên nào trong hệ thống.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
 
 </body>
 </html>

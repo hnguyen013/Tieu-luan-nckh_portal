@@ -1,0 +1,65 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết giảng viên</title>
+
+    <link rel="stylesheet" href="{% static 'portal/css/public_home.css' %}">
+    <link rel="stylesheet" href="{% static 'portal/css/student_detail.css' %}">
+</head>
+<body>
+
+<div class="student-detail-container">
+
+    <div class="student-detail-card">
+
+        <div class="student-detail-avatar">
+            {% if lecturer.avatar %}
+                <img src="{{ lecturer.avatar.url }}" alt="{{ lecturer.full_name }}">
+            {% else %}
+                <span class="avatar-placeholder">👤</span>
+            {% endif %}
+        </div>
+
+        <div class="student-detail-info">
+            <h1>{{ lecturer.full_name }}</h1>
+            <p class="student-role">Giảng viên</p>
+
+            <ul class="student-meta">
+                {% if lecturer.degree %}
+                <li><strong>Học vị:</strong> {{ lecturer.degree }}</li>
+                {% endif %}
+                <li><strong>Khoa:</strong> {{ lecturer.faculty.name }}</li>
+                <li><strong>Email:</strong> {{ lecturer.email|default:"—" }}</li>
+            </ul>
+
+            <a href="{% url 'portal:public-lecturer-list' %}" class="back-link">
+                ← Quay lại danh sách giảng viên
+            </a>
+        </div>
+
+    </div>
+
+    <!-- ĐỀ TÀI HƯỚNG DẪN -->
+    <div class="student-topics">
+        <h2>Danh sách đề tài hướng dẫn</h2>
+
+        {% if projects %}
+            <ul>
+                {% for p in projects %}
+                    <li>{{ p.name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">
+                Chưa có đề tài hướng dẫn.
+            </p>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>

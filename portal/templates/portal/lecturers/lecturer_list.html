@@ -1,0 +1,97 @@
+{% extends "portal/admin_base.html" %}
+
+{% block title %}Danh sách giảng viên{% endblock %}
+{% block menu_lecturers_active %} active{% endblock %}
+{% block page_header %}Quản lý giảng viên hướng dẫn{% endblock %}
+{% block breadcrumb %}Trang chủ / Giảng viên hướng dẫn{% endblock %}
+
+{% block content %}
+
+    <div class="list-header">
+        <h2>Danh sách giảng viên</h2>
+        <a href="{% url 'portal:admin-lecturer-create' %}" class="btn-primary">
+            + Thêm giảng viên
+        </a>
+    </div>
+
+    <form method="get" class="form-inline" style="margin-bottom: 12px;">
+        <input type="text"
+               name="q"
+               placeholder="Tìm mã GV / Họ tên / Khoa"
+               value="{{ q }}"
+               style="min-width: 280px; margin-right: 8px;">
+
+        <select name="faculty" style="width: 220px; margin-right: 8px;">
+            <option value="">— Tất cả khoa —</option>
+            {% for f in faculties %}
+                <option value="{{ f.id }}" {% if faculty_id|stringformat:"s" == f.id|stringformat:"s" %}selected{% endif %}>
+                    {{ f.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label style="margin-right: 8px; font-size: 13px;">
+            <input type="checkbox"
+                   name="include_inactive"
+                   value="1"
+                   {% if include_inactive %}checked{% endif %}>
+            Hiển thị cả giảng viên ngừng sử dụng
+        </label>
+
+        <button type="submit" class="btn-secondary">Lọc</button>
+    </form>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Mã GV</th>
+            <th>Họ tên</th>
+            <th>Năm sinh</th>
+            <th>Giới tính</th>
+            <th>Khoa</th>
+            <th>Email</th>
+            <th>SĐT</th>
+            <th>Học vị</th>
+            <th>Chức danh</th>
+            <th>Trạng thái</th>
+            <th style="width: 150px;">Thao tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for l in lecturers %}
+            <tr>
+                <td>{{ l.lecturer_id }}</td>
+                <td>{{ l.full_name }}</td>
+                <td>{{ l.year_of_birth|default:"" }}</td>
+                <td>
+                    {% if l.gender == "M" %}Nam{% elif l.gender == "F" %}Nữ{% else %}Khác{% endif %}
+                </td>
+                <td>{{ l.faculty.name|default:"" }}</td>
+                <td>{{ l.email|default:"" }}</td>
+                <td>{{ l.phone_number|default:"" }}</td>
+                <td>{{ l.degree|default:"" }}</td>
+                <td>{{ l.academic_rank|default:"" }}</td>
+                <td>
+                    {% if l.is_active %}
+                        <span class="badge badge-success">Đang theo dõi</span>
+                    {% else %}
+                        <span class="badge badge-danger">Ngừng sử dụng</span>
+                    {% endif %}
+                </td>
+                <td class="actions">
+                    <a href="{% url 'portal:admin-lecturer-edit' l.id %}">Sửa</a>
+                    |
+                    <a href="{% url 'portal:admin-lecturer-toggle-active' l.id %}">
+                        {% if l.is_active %}Ngừng sử dụng{% else %}Kích hoạt{% endif %}
+                    </a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="11">Chưa có giảng viên nào trong hệ thống.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

@@ -8,7 +8,7 @@
 body {
     font-family: Arial, sans-serif;
     background: #f5f5f5;
-    color: #ffffff;
+    color: #333333;
 }
 
 .container {
@@ -243,5 +243,168 @@ body {
 
     .hero-right {
         justify-content: flex-start;
+    }
+}
+
+/* ===== FIX STUDENT GRID ===== */
+.students-section {
+    padding: 60px 0;
+    background: #f8f9fb;
+    color: #333;
+}
+
+.student-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+}
+
+.student-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.student-card-inner {
+    padding: 28px 24px;
+    text-align: center;
+}
+
+.student-avatar {
+    width: 90px;
+    height: 90px;
+    background: #e5e7eb;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+}
+
+.student-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #d90429;
+    margin-bottom: 6px;
+}
+
+.student-info {
+    text-align: left;
+    font-size: 14px;
+}
+
+.btn-detail {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 10px 18px;
+    background: #1d3557;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+}
+.student-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;        /* 🔥 CHỐT LỖI TRÀN ẢNH */
+    margin: 0 auto 12px;
+    background: #f1f3f5;
+}
+
+.student-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;       /* 🔥 CẮT ẢNH CHO VỪA KHUNG */
+    display: block;
+}
+
+/* ===== STUDENT DETAIL ===== */
+
+.student-detail-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px;
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* Avatar */
+.student-detail-avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f1f3f5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.student-detail-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.student-detail-avatar .avatar-placeholder {
+    font-size: 64px;
+    opacity: 0.6;
+}
+
+/* Info */
+.student-detail-info {
+    flex: 1;
+}
+
+.student-name {
+    font-size: 26px;
+    margin-bottom: 6px;
+    color: #e60023;
+}
+
+.student-role {
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.student-meta {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 24px;
+}
+
+.student-meta li {
+    font-size: 15px;
+    color: #333;
+}
+
+/* Topics */
+.student-topics {
+    margin-top: 40px;
+}
+
+.student-topics h2 {
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.text-muted {
+    color: #666;
+}
+@media (max-width: 768px) {
+    .student-detail-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .student-meta {
+        grid-template-columns: 1fr;
     }
 }
