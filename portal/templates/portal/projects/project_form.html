@@ -1,0 +1,291 @@
+{% extends "portal/admin_base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block menu_projects_active %} active{% endblock %}
+{% block page_header %}{{ title }}{% endblock %}
+{% block breadcrumb %}Trang chủ / Đề tài / {{ title }}{% endblock %}
+
+{% block content %}
+
+<form method="post"
+      enctype="multipart/form-data"
+      class="form-vertical project-form">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="form-errors">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <!-- ================= THÔNG TIN ĐỀ TÀI ================= -->
+    <div class="admin-form-card">
+        <div class="admin-form-title">Thông tin đề tài</div>
+
+        <div class="form-group">
+            <label for="{{ form.code.id_for_label }}">
+                Mã đề tài <span class="required">*</span>
+            </label>
+            {{ form.code }}
+            {% if form.code.errors %}
+                <div class="field-error">{{ form.code.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">
+                Tên đề tài <span class="required">*</span>
+            </label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <div class="field-error">{{ form.title.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.summary.id_for_label }}">Tóm tắt</label>
+            {{ form.summary }}
+            {% if form.summary.errors %}
+                <div class="field-error">{{ form.summary.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.faculty.id_for_label }}">
+                Khoa <span class="required">*</span>
+            </label>
+            {{ form.faculty }}
+            {% if form.faculty.errors %}
+                <div class="field-error">{{ form.faculty.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.academic_year.id_for_label }}">
+                Năm học <span class="required">*</span>
+            </label>
+            {{ form.academic_year }}
+            {% if form.academic_year.errors %}
+                <div class="field-error">{{ form.academic_year.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.project_type.id_for_label }}">
+                Loại đề tài <span class="required">*</span>
+            </label>
+            {{ form.project_type }}
+            {% if form.project_type.errors %}
+                <div class="field-error">{{ form.project_type.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.status.id_for_label }}">
+                Trạng thái <span class="required">*</span>
+            </label>
+            {{ form.status }}
+            {% if form.status.errors %}
+                <div class="field-error">{{ form.status.errors|striptags }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ================= GIẢNG VIÊN HƯỚNG DẪN ================= -->
+    <div class="admin-form-card">
+        <div class="admin-form-title">Giảng viên hướng dẫn</div>
+
+        <div class="form-group">
+            <label>Chọn giảng viên <span class="required">*</span></label>
+
+            <input type="text"
+                   id="lecturerFilter"
+                   class="filter-input"
+                   placeholder="Gõ để tìm tên giảng viên...">
+
+            {{ form.lecturer_ids }}
+
+            {% if form.lecturer_ids.errors %}
+                <div class="field-error">{{ form.lecturer_ids.errors|striptags }}</div>
+            {% endif %}
+
+            <div class="help-text">
+                Có thể chọn nhiều giảng viên (giữ Ctrl / Shift).
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SINH VIÊN THAM GIA ================= -->
+    <div class="admin-form-card">
+    <div class="admin-form-title">Sinh viên tham gia</div>
+
+    <div class="form-two-columns">
+
+        <!-- CỘT TRÁI: DANH SÁCH ĐÃ CHỌN -->
+        <div class="selected-box">
+            <ul id="selectedStudents" class="selected-list selected-chip-list">
+
+            </ul>
+        </div>
+
+        <!-- CỘT PHẢI: SELECT -->
+        <div class="form-group">
+            <label>Chọn sinh viên <span class="required">*</span></label>
+
+            <input type="text"
+                   id="studentFilter"
+                   class="filter-input"
+                   placeholder="Gõ để tìm MSSV / tên sinh viên...">
+
+            {{ form.student_ids }}
+
+            {% if form.student_ids.errors %}
+                <div class="field-error">{{ form.student_ids.errors|striptags }}</div>
+            {% endif %}
+
+            <div class="help-text">
+                Có thể chọn nhiều sinh viên (giữ Ctrl / Shift).
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.leader_student_id.id_for_label }}">
+            Trưởng nhóm
+        </label>
+        {{ form.leader_student_id }}
+        {% if form.leader_student_id.errors %}
+            <div class="field-error">{{ form.leader_student_id.errors|striptags }}</div>
+        {% endif %}
+    </div>
+</div>
+
+
+    <!-- ================= FILE ĐÍNH KÈM ================= -->
+    <div class="admin-form-card">
+        <div class="admin-form-title">File đính kèm</div>
+
+        <div class="form-group">
+            <label for="{{ form.attachments.id_for_label }}">
+                {{ form.attachments.label }}
+            </label>
+            {{ form.attachments }}
+            {% if form.attachments.errors %}
+                <div class="field-error">{{ form.attachments.errors|striptags }}</div>
+            {% endif %}
+            <div class="help-text">
+                Có thể chọn nhiều file (đề cương / báo cáo).
+            </div>
+        </div>
+
+        {% if project %}
+            <div class="form-group">
+                <label>File đã đính kèm</label>
+                {% if project.attachments.all %}
+                    <ul class="attached-files">
+                        {% for f in project.attachments.all %}
+                            <li>
+                                <a href="{{ f.file.url }}" target="_blank">
+                                    {{ f.original_name }}
+                                </a>
+                                <small>
+                                    ({{ f.uploaded_at|date:"d/m/Y H:i" }})
+                                </small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="help-text">Chưa có file đính kèm.</div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- ================= ACTION ================= -->
+    <button type="submit" class="btn-primary">
+        {{ submit_label|default:"Lưu đề tài" }}
+    </button>
+    <a href="{% url 'portal:admin-project-list' %}" class="btn-secondary">
+        Hủy
+    </a>
+</form>
+
+<script>
+(function () {
+    function attachFilter(inputId, selectId) {
+        const filter = document.getElementById(inputId);
+        const select = document.getElementById(selectId);
+        if (!filter || !select) return;
+
+        const allOptions = Array.from(select.options).map(o => ({
+            value: o.value,
+            text: o.text
+        }));
+
+        const getSelected = () =>
+            new Set(Array.from(select.selectedOptions).map(o => o.value));
+
+        filter.addEventListener("input", function () {
+            const q = filter.value.trim().toLowerCase();
+            const selected = getSelected();
+
+            select.innerHTML = "";
+            allOptions
+                .filter(o => !q || o.text.toLowerCase().includes(q))
+                .forEach(o => {
+                    const opt = new Option(o.text, o.value);
+                    if (selected.has(o.value)) opt.selected = true;
+                    select.add(opt);
+                });
+        });
+    }
+
+    attachFilter("studentFilter", "id_student_ids");
+    attachFilter("lecturerFilter", "id_lecturer_ids");
+})();
+</script>
+<script>
+(function () {
+    const select = document.getElementById("id_student_ids");
+    const list = document.getElementById("selectedStudents");
+
+    if (!select || !list) return;
+
+    function renderSelected() {
+    const selected = Array.from(select.selectedOptions);
+    const leader = document.getElementById("id_leader_student_id")?.value;
+
+    list.innerHTML = "";
+
+    if (selected.length === 0) {
+        const li = document.createElement("li");
+        li.className = "empty";
+        li.textContent = "Chưa chọn sinh viên nào";
+        list.appendChild(li);
+        return;
+    }
+
+    selected.forEach(opt => {
+        const li = document.createElement("li");
+        li.textContent = opt.text;
+
+        if (leader && opt.value === leader) {
+            li.classList.add("leader");
+            li.textContent += " ★ Trưởng nhóm";
+        }
+
+        list.appendChild(li);
+    });
+}
+
+
+    // Lắng nghe khi chọn / bỏ chọn
+    select.addEventListener("change", renderSelected);
+
+    // Render lần đầu (trường hợp edit form)
+    renderSelected();
+})();
+</script>
+
+{% endblock %}

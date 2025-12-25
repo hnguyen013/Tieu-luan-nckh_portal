@@ -1,0 +1,126 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Dữ liệu giảng viên - Đề tài nghiên cứu khoa học</title>
+
+    <link rel="stylesheet" href="{% static 'portal/css/public_home.css' %}">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="main-header">
+    <div class="container header-inner">
+        <div class="logo">
+            <span>NCKH Portal</span>
+        </div>
+        <nav class="main-nav">
+            <a href="{% url 'portal:public-home' %}" class="nav-item">Trang chủ</a>
+            <a href="{% url 'portal:public-student-list' %}" class="nav-item">Sinh viên</a>
+            <a href="{% url 'portal:public-lecturer-list' %}" class="nav-item active">Giảng viên</a>
+            <a href="#" class="nav-item">Đề tài khoa học</a>
+            <a href="#" class="nav-item">Thống kê</a>
+        </nav>
+        <div class="header-actions">
+            <a href="{% url 'portal:admin-dashboard' %}" class="btn-login">Đăng nhập</a>
+        </div>
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+
+        <div class="hero-left">
+            <h1 class="hero-title">
+                <span class="title-line-1">Dữ liệu giảng viên</span><br>
+                <span class="title-line-2">Giảng viên tham gia hướng dẫn NCKH</span>
+            </h1>
+            <p class="hero-subtitle">
+                Lọc theo khoa và từ khóa để tìm giảng viên trong toàn trường.
+            </p>
+        </div>
+
+        <div class="hero-right">
+            <div class="search-card">
+                <h2>Lọc <span class="highlight">Giảng viên</span></h2>
+                <form method="get">
+                    <select name="faculty_id">
+                        <option value="">Chọn khoa</option>
+                        {% for f in faculty_list %}
+                            <option value="{{ f.id }}"
+                                {% if f.id|stringformat:"s" == faculty_id %}selected{% endif %}>
+                                {{ f.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <input type="text"
+                           name="q"
+                           placeholder="Tên, học vị, email..."
+                           value="{{ q }}"/>
+
+                    <button type="submit">Tìm kiếm</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- KẾT QUẢ -->
+<section class="students-section">
+    <div class="container">
+
+        <div class="results-header">
+            <h2 class="results-title">Dữ liệu giảng viên</h2>
+            <div class="results-count">
+                {{ lecturers|length }} KẾT QUẢ
+            </div>
+        </div>
+
+        <div class="student-grid">
+            {% for l in lecturers %}
+            <div class="student-card">
+                <div class="student-card-inner">
+
+                    <div class="student-avatar">
+                        {% if l.avatar %}
+                            <img src="{{ l.avatar.url }}" alt="{{ l.full_name }}">
+                        {% else %}
+                            <span class="avatar-placeholder">👨‍🏫</span>
+                        {% endif %}
+                    </div>
+
+                    <h3 class="student-name">{{ l.full_name }}</h3>
+                    <p class="student-role">Giảng viên</p>
+
+                    <div class="student-info">
+                        {% if l.degree %}
+                        <p><strong>Học vị:</strong> {{ l.degree }}</p>
+                        {% endif %}
+                        <p><strong>Khoa:</strong> {{ l.faculty.name }}</p>
+                        {% if l.email %}
+                        <p><strong>Email:</strong> {{ l.email }}</p>
+                        {% endif %}
+                    </div>
+
+                    <a href="{% url 'portal:public-lecturer-detail' l.lecturer_id %}"
+                       class="btn-detail">
+                        Xem chi tiết
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+                <p>Chưa có giảng viên nào trong hệ thống.</p>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+{% extends "portal/admin_base.html" %}
+
+{% block title %}Cập nhật trạng thái{% endblock %}
+{% block menu_projects_active %} active{% endblock %}
+{% block page_header %}Cập nhật trạng thái đề tài{% endblock %}
+{% block breadcrumb %}Trang chủ / Đề tài / Trạng thái{% endblock %}
+
+{% block content %}
+
+    {% if messages %}
+        <div class="admin-messages">
+            {% for message in messages %}
+                <div class="admin-message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="admin-form-card" style="margin-bottom: 12px;">
+        <div class="admin-form-title">
+            {{ project.code }} — {{ project.title }}
+        </div>
+
+        <div style="font-size: 13px; color:#555;">
+            Trạng thái hiện tại:
+            <strong>{{ project.get_status_display }}</strong>
+        </div>
+    </div>
+
+    <form method="post" class="form-vertical">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="id_status">Chọn trạng thái mới</label>
+            <select name="status" id="id_status">
+                {% for value,label in status_choices %}
+                    <option value="{{ value }}" {% if project.status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="id_note">Ghi chú (tuỳ chọn)</label>
+            <input type="text" name="note" id="id_note" placeholder="VD: Chuyển sang giai đoạn xét duyệt...">
+        </div>
+
+        <button type="submit" class="btn-primary">Cập nhật</button>
+        <a href="{% url 'portal:admin-project-list' %}" class="btn-secondary">Quay lại</a>
+    </form>
+
+    {# Hiển thị log nếu bạn đã có status_logs #}
+    {% if project.status_logs.all %}
+        <div style="margin-top: 18px;">
+            <h3 style="margin-bottom: 10px;">Lịch sử chuyển trạng thái</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th style="width: 160px;">Thời điểm</th>
+                    <th style="width: 160px;">Từ</th>
+                    <th style="width: 160px;">Sang</th>
+                    <th>Ghi chú</th>
+                    <th style="width: 200px;">Người thực hiện</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for log in project.status_logs.all %}
+                    <tr>
+                        <td>{{ log.changed_at|date:"d/m/Y H:i" }}</td>
+                        <td>{{ log.from_status }}</td>
+                        <td><strong>{{ log.to_status }}</strong></td>
+                        <td>{{ log.note|default:"" }}</td>
+                        <td>{{ log.changed_by|default:"" }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+{% endblock %}

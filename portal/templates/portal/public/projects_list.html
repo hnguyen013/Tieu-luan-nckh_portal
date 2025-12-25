@@ -1,0 +1,93 @@
+{% extends "portal/public/base.html" %}
+{% load static %}
+
+{% block title %}
+Danh sách đề tài NCKH
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+
+  <!-- Tiêu đề -->
+  <div class="mb-4">
+    <h3 class="fw-bold text-primary">
+      Danh sách đề tài nghiên cứu khoa học
+    </h3>
+    <p class="text-muted mb-0">
+      Các đề tài đang được thực hiện và đã nghiệm thu
+    </p>
+  </div>
+
+  <!-- Bảng danh sách -->
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th style="width: 120px;">Mã đề tài</th>
+            <th>Tên đề tài</th>
+            <th style="width: 180px;">Khoa</th>
+            <th style="width: 160px;">Năm học</th>
+            <th style="width: 150px;">Trạng thái</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for project in projects %}
+          <tr>
+            <td class="fw-semibold">
+              {{ project.code }}
+            </td>
+
+            <td>
+              <a
+                href="{% url 'portal:public-project-detail' project.code %}"
+                class="text-decoration-none fw-semibold"
+              >
+                {{ project.title }}
+              </a>
+              <div class="small text-muted">
+                {{ project.project_type.name }}
+              </div>
+            </td>
+
+            <td>
+              {{ project.faculty.name }}
+            </td>
+
+            <td>
+              {{ project.academic_year.name }}
+            </td>
+
+            <td>
+              {% if project.status == project.Status.IN_PROGRESS %}
+                <span class="badge bg-info text-dark">
+                  Đang thực hiện
+                </span>
+              {% elif project.status == project.Status.ACCEPTED %}
+                <span class="badge bg-success">
+                  Đã nghiệm thu
+                </span>
+              {% else %}
+                <span class="badge bg-secondary">
+                  {{ project.get_status_display }}
+                </span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-center text-muted py-4">
+              Hiện chưa có đề tài nào được công bố.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
