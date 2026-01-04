@@ -1,33 +1,9 @@
+{% extends "portal/home_base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Dữ liệu giảng viên - Đề tài nghiên cứu khoa học</title>
+{% block title %}Dữ liệu giảng viên - Đề tài nghiên cứu khoa học{% endblock %}
 
-    <link rel="stylesheet" href="{% static 'portal/css/public_home.css' %}">
-</head>
-<body>
-
-<!-- HEADER -->
-<header class="main-header">
-    <div class="container header-inner">
-        <div class="logo">
-            <span>NCKH Portal</span>
-        </div>
-        <nav class="main-nav">
-            <a href="{% url 'portal:public-home' %}" class="nav-item">Trang chủ</a>
-            <a href="{% url 'portal:public-student-list' %}" class="nav-item">Sinh viên</a>
-            <a href="{% url 'portal:public-lecturer-list' %}" class="nav-item active">Giảng viên</a>
-            <a href="#" class="nav-item">Đề tài khoa học</a>
-            <a href="#" class="nav-item">Thống kê</a>
-        </nav>
-        <div class="header-actions">
-            <a href="{% url 'portal:admin-dashboard' %}" class="btn-login">Đăng nhập</a>
-        </div>
-    </div>
-</header>
+{% block content %}
 
 <!-- HERO -->
 <section class="hero">
@@ -102,7 +78,11 @@
                         {% if l.degree %}
                         <p><strong>Học vị:</strong> {{ l.degree }}</p>
                         {% endif %}
+
+                        {% if l.faculty %}
                         <p><strong>Khoa:</strong> {{ l.faculty.name }}</p>
+                        {% endif %}
+
                         {% if l.email %}
                         <p><strong>Email:</strong> {{ l.email }}</p>
                         {% endif %}
@@ -122,5 +102,4 @@
     </div>
 </section>
 
-</body>
-</html>
+{% endblock %}

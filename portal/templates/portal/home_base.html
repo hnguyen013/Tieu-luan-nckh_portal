@@ -1,0 +1,46 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Đề tài nghiên cứu khoa học - SV ĐHSP Huế{% endblock %}</title>
+
+    <!-- CSS chung cho public -->
+    <link rel="stylesheet" href="{% static 'portal/css/public_home.css' %}">
+    <link rel="stylesheet" href="{% static 'portal/css/project_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'portal/css/project_list.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="main-header">
+        <div class="container header-inner">
+            <div class="logo">
+                <span>NCKH Portal</span>
+            </div>
+            <nav class="main-nav">
+                <a href="{% url 'portal:public-home' %}" class="nav-item">Trang chủ</a>
+                <a href="{% url 'portal:public-student-list' %}" class="nav-item">Sinh viên</a>
+                <a href="{% url 'portal:public-lecturer-list' %}" class="nav-item">Giảng viên hướng dẫn</a>
+                <a href="{% url 'portal:public-project-list' %}" class="nav-item">Đề tài khoa học</a>
+                <a href="#" class="nav-item">Thống kê</a>
+            </nav>
+            <div class="header-actions">
+                <a href="{% url 'portal:admin-dashboard' %}" class="btn-login">Đăng nhập</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Nội dung trang con -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

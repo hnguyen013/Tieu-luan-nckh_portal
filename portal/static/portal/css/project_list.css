@@ -1,0 +1,143 @@
+/* ===== Filter layout (giống ảnh 2) ===== */
+.filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.filter-grid-key {
+  display: grid;
+  grid-template-columns: 1fr 140px;
+  gap: 10px;
+}
+
+/* Đồng bộ input/select trong search-card (nếu public_home.css chưa set đủ) */
+.search-card select,
+.search-card input[type="text"],
+.search-card input[type="date"] {
+  width: 100%;
+  height: 38px;
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+  padding: 0 10px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.search-card button {
+  height: 38px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ===== Results header actions ===== */
+.results-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #f2a23a;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* ===== Project cards (fallback nếu project_list.css chưa có) ===== */
+.project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.project-card {
+  background: #fff;
+  border: 1px solid #eaecf0;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.project-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.project-title {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.project-meta {
+  margin: 0;
+  color: #475467;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.project-badge {
+  background: #ff2b5b;
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.project-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+/* Nút detail: nếu public_home.css đã có .btn-detail thì nó sẽ override */
+.btn-detail {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #6f86ff;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* ===== Paging ===== */
+.paging {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.paging-info {
+  margin: 0 6px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 992px) {
+  .filter-grid-2,
+  .filter-grid-key {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,41 @@
+.project-detail {
+    padding: 50px 0;
+}
+
+.detail-card {
+    max-width: 900px;
+    margin: auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,.12);
+}
+
+.detail-title {
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #0b1c39;
+}
+
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.detail-table th {
+    width: 220px;
+    text-align: left;
+    padding: 12px;
+    background: #f5f7fa;
+    font-weight: 600;
+}
+
+.detail-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.btn-back {
+    color: white;
+    text-decoration: none;
+}
