@@ -1,51 +1,61 @@
-{% extends "portal/base_public.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ project.name }}</title>
+    <link rel="stylesheet" href="{% static 'portal/css/public_home.css' %}">
+    <link rel="stylesheet" href="{% static 'portal/css/project_detail.css' %}">
+</head>
+<body>
 
-{% block title %}
-Chi tiết đề tài – {{ project.title }}
-{% endblock %}
-
-{% block content %}
-<div class="container mt-4">
-    <h2 class="mb-3">{{ project.title }}</h2>
-
-    <p class="text-muted">
-        Mã đề tài: <strong>{{ project.code }}</strong>
-    </p>
-
-    <table class="table table-bordered">
-        <tr>
-            <th>Khoa</th>
-            <td>{{ project.faculty.name }}</td>
-        </tr>
-        <tr>
-            <th>Năm học</th>
-            <td>{{ project.academic_year.name }}</td>
-        </tr>
-        <tr>
-            <th>Loại đề tài</th>
-            <td>{{ project.project_type.name }}</td>
-        </tr>
-        <tr>
-            <th>Trạng thái</th>
-            <td>
-                {% if project.status == "in_progress" %}
-                    <span class="badge bg-success">Đang thực hiện</span>
-                {% elif project.status == "completed" %}
-                    <span class="badge bg-primary">Đã nghiệm thu</span>
-                {% endif %}
-            </td>
-        </tr>
-    </table>
-
-    {% if project.description %}
-    <div class="mt-3">
-        <h5>Mô tả đề tài</h5>
-        <p>{{ project.description|linebreaks }}</p>
+<header class="main-header">
+    <div class="container header-inner">
+        <div class="logo">NCKH Portal</div>
+        <a href="{% url 'portal:public-project-list' %}" class="btn-back">← Quay lại</a>
     </div>
-    {% endif %}
+</header>
 
-    <a href="{% url 'portal:public-project-list' %}" class="btn btn-secondary mt-3">
-        ← Quay lại danh sách
-    </a>
-</div>
-{% endblock %}
+<section class="project-detail">
+    <div class="container">
+        <div class="detail-card">
+            <h2 class="detail-title">Thông tin đề tài</h2>
+
+            <table class="detail-table">
+                <tr>
+                    <th>Mã đề tài</th>
+                    <td>{{ project.code }}</td>
+                </tr>
+                <tr>
+                    <th>Tên đề tài</th>
+                    <td>{{ project.name }}</td>
+                </tr>
+                <tr>
+                    <th>Loại đề tài</th>
+                    <td>{{ project.project_type.name }}</td>
+                </tr>
+                <tr>
+                    <th>Đơn vị quản lý</th>
+                    <td>{{ project.faculty.name }}</td>
+                </tr>
+                <tr>
+                    <th>Năm học</th>
+                    <td>{{ project.academic_year.name }}</td>
+                </tr>
+                <tr>
+                    <th>Tình trạng</th>
+                    <td>{{ project.get_status_display }}</td>
+                </tr>
+                {% if project.description %}
+                <tr>
+                    <th>Mô tả</th>
+                    <td>{{ project.description }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

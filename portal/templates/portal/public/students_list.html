@@ -1,33 +1,9 @@
+{% extends "portal/home_base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Dữ liệu sinh viên - Đề tài nghiên cứu khoa học</title>
+{% block title %}Dữ liệu sinh viên - Đề tài nghiên cứu khoa học{% endblock %}
 
-    <link rel="stylesheet" href="{% static 'portal/css/public_home.css' %}">
-</head>
-<body>
-    <!-- HEADER: giữ nguyên như public_home -->
-    <header class="main-header">
-        <div class="container header-inner">
-            <div class="logo">
-                <span>NCKH Portal</span>
-            </div>
-            <nav class="main-nav">
-                <a href="{% url 'portal:public-home' %}" class="nav-item">Trang chủ</a>
-                <a href="{% url 'portal:public-student-list' %}" class="nav-item">Sinh viên</a>
-                <a href="#" class="nav-item">Giảng viên hướng dẫn</a>
-                <a href="#" class="nav-item">Đề tài khoa học</a>
-                <a href="#" class="nav-item">Thống kê</a>
-            </nav>
-            <div class="header-actions">
-                <a href="{% url 'portal:admin-dashboard' %}" class="btn-login">Đăng nhập</a>
-            </div>
-        </div>
-    </header>
-
+{% block content %}
     <!-- PHẦN 1: HERO + KHUNG LỌC -->
     <section class="hero">
         <div class="hero-overlay"></div>
@@ -66,7 +42,6 @@
                                 </option>
                             {% endfor %}
                         </select>
-
 
                         <input type="text"
                                name="q"
@@ -127,7 +102,5 @@
         </div>
     </div>
 </section>
+{% endblock %}
 
-
-</body>
-</html>

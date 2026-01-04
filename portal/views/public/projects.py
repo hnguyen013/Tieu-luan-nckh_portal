@@ -5,37 +5,49 @@ from portal.models import Project
 def public_project_list(request):
     """
     Danh sách đề tài NCKH public
-    Chỉ hiển thị đề tài đã được duyệt và đang thực hiện / đã nghiệm thu
     """
-    projects = Project.objects.filter(
-        status__in=[
-            Project.Status.IN_PROGRESS,  # Đang thực hiện
-            Project.Status.ACCEPTED,     # Đã nghiệm thu
-        ],
-        is_active=True,
-    ).select_related(
-        "faculty",
-        "academic_year",
-        "project_type",
+    projects = (
+        Project.objects.filter(
+            status__in=[
+                Project.Status.IN_PROGRESS,  # Đang thực hiện
+                Project.Status.ACCEPTED,     # Đã nghiệm thu
+            ],
+            is_active=True,
+        )
+        .select_related(
+            "faculty",
+            "academic_year",
+            "project_type",
+        )
+        .prefetch_related(
+            "fields",              # 👈 LĨNH VỰC
+        )
+        .order_by("-created_at")   # 👈 mới nhất lên trước (rất nên)
     )
 
     return render(
         request,
         "portal/public/projects_list.html",
-        {"projects": projects},
+        {
+            "projects": projects,
+        },
     )
 
-
 def public_project_detail(request, code):
-    """
-    Chi tiết đề tài NCKH public
-    """
     project = get_object_or_404(
-        Project,
+        Project.objects.select_related(
+            "faculty",
+            "academic_year",
+            "project_type",
+        ).prefetch_related(
+            "fields",
+            "project_students",
+            "project_lecturers",
+        ),
         code=code,
         status__in=[
-            Project.Status.IN_PROGRESS,  # Đang thực hiện
-            Project.Status.ACCEPTED,     # Đã nghiệm thu
+            Project.Status.IN_PROGRESS,
+            Project.Status.ACCEPTED,
         ],
         is_active=True,
     )

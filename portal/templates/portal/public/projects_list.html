@@ -1,93 +1,157 @@
-{% extends "portal/public/base.html" %}
+{% extends "portal/home_base.html" %}
 {% load static %}
 
-{% block title %}
-Danh sách đề tài NCKH
+{% block title %}Dữ liệu đề tài - Đề tài nghiên cứu khoa học{% endblock %}
+
+{% block extra_css %}
+    <!-- CSS redesign cho trang projects_list -->
+    <link rel="stylesheet" href="{% static 'portal/css/projects_list.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="container my-4">
 
-  <!-- Tiêu đề -->
-  <div class="mb-4">
-    <h3 class="fw-bold text-primary">
-      Danh sách đề tài nghiên cứu khoa học
-    </h3>
-    <p class="text-muted mb-0">
-      Các đề tài đang được thực hiện và đã nghiệm thu
-    </p>
-  </div>
+    <!-- HERO giống students_list + ô lọc theo ảnh 2 -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <div class="hero-left">
+                <h1 class="hero-title">
+                    <span class="title-line-1">DỮ LIỆU ĐỀ TÀI</span><br>
+                    <span class="title-line-2">Tra cứu đề tài khoa học</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Lọc theo đơn vị, tác giả, cấp đề tài, lĩnh vực, thời điểm và từ khóa để tìm nhanh đề tài trong toàn trường.
+                </p>
+            </div>
 
-  <!-- Bảng danh sách -->
-  <div class="card shadow-sm">
-    <div class="card-body p-0">
+            <div class="hero-right">
+                <div class="search-card">
+                    <h2>Lọc <span class="highlight">Đề tài</span></h2>
 
-      <table class="table table-hover align-middle mb-0">
-        <thead class="table-light">
-          <tr>
-            <th style="width: 120px;">Mã đề tài</th>
-            <th>Tên đề tài</th>
-            <th style="width: 180px;">Khoa</th>
-            <th style="width: 160px;">Năm học</th>
-            <th style="width: 150px;">Trạng thái</th>
-          </tr>
-        </thead>
+                    <form method="get" action="{% url 'portal:public-project-list' %}" class="filter-form">
+                        <select name="unit_id">
+                            <option value="">--Chọn đơn vị--</option>
+                            {% for u in unit_list %}
+                                <option value="{{ u.id }}" {% if u.id|stringformat:"s" == unit_id %}selected{% endif %}>
+                                    {{ u.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
 
-        <tbody>
-          {% for project in projects %}
-          <tr>
-            <td class="fw-semibold">
-              {{ project.code }}
-            </td>
+                        <select name="author_id">
+                            <option value="">--Chọn tác giả--</option>
+                            {% for a in author_list %}
+                                <option value="{{ a.id }}" {% if a.id|stringformat:"s" == author_id %}selected{% endif %}>
+                                    {{ a.full_name|default:a.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
 
-            <td>
-              <a
-                href="{% url 'portal:public-project-detail' project.code %}"
-                class="text-decoration-none fw-semibold"
-              >
-                {{ project.title }}
-              </a>
-              <div class="small text-muted">
-                {{ project.project_type.name }}
-              </div>
-            </td>
+                        <div class="filter-grid-2">
+                            <select name="level_id">
+                                <option value="">--Chọn cấp đề tài--</option>
+                                {% for lv in level_list %}
+                                    <option value="{{ lv.id }}" {% if lv.id|stringformat:"s" == level_id %}selected{% endif %}>
+                                        {{ lv.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
 
-            <td>
-              {{ project.faculty.name }}
-            </td>
+                            <select name="field_id">
+                                <option value="">--Chọn lĩnh vực--</option>
+                                {% for f in field_list %}
+                                    <option value="{{ f.id }}" {% if f.id|stringformat:"s" == field_id %}selected{% endif %}>
+                                        {{ f.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-            <td>
-              {{ project.academic_year.name }}
-            </td>
+                        <div class="filter-grid-2">
+                            <input type="date" name="from_date" value="{{ from_date }}">
+                            <input type="date" name="to_date" value="{{ to_date }}">
+                        </div>
 
-            <td>
-              {% if project.status == project.Status.IN_PROGRESS %}
-                <span class="badge bg-info text-dark">
-                  Đang thực hiện
-                </span>
-              {% elif project.status == project.Status.ACCEPTED %}
-                <span class="badge bg-success">
-                  Đã nghiệm thu
-                </span>
-              {% else %}
-                <span class="badge bg-secondary">
-                  {{ project.get_status_display }}
-                </span>
-              {% endif %}
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="5" class="text-center text-muted py-4">
-              Hiện chưa có đề tài nào được công bố.
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+                        <div class="filter-grid-key">
+                            <input type="text" name="q" placeholder="Từ khóa tìm kiếm" value="{{ q }}">
+                            <button type="submit">Tìm kiếm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    </div>
-  </div>
+    <!-- KẾT QUẢ -->
+    <section class="students-section">
+        <div class="container">
+            <div class="results-header">
+                <h2 class="results-title">Dữ liệu đề tài</h2>
 
-</div>
+                <div class="results-actions">
+                    <div class="results-count">
+                        {% if page_obj %}
+                            {{ page_obj.start_index }} - {{ page_obj.end_index }} / {{ page_obj.paginator.count }} KẾT QUẢ
+                        {% else %}
+                            {{ projects|length }} KẾT QUẢ
+                        {% endif %}
+                    </div>
+
+                    {% if export_url %}
+                        <a class="btn-export" href="{{ export_url }}">⇢ XUẤT RA EXCEL</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="project-list">
+                {% for p in projects %}
+                    <div class="project-card">
+                        <div class="project-top">
+                            <div class="project-main">
+                                <h3 class="project-title">{{ p.title|default:p.name }}</h3>
+
+                                <p class="project-meta">
+                                    {% if p.field %}<strong>Lĩnh vực:</strong> {{ p.field }}{% endif %}
+                                    {% if p.unit %} &nbsp;|&nbsp; <strong>Đơn vị:</strong> {{ p.unit }}{% endif %}
+                                    {% if p.executor_unit %}<br><strong>Đơn vị thực hiện:</strong> {{ p.executor_unit }}{% endif %}
+                                    {% if p.owner %}<br><strong>Người tham gia:</strong> {{ p.owner }}{% endif %}
+                                </p>
+                            </div>
+
+                            {% if p.code %}
+                                <div class="project-badge">{{ p.code }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="project-actions">
+                            {% if p.id %}
+                                <a class="btn-detail" href="{% url 'portal:public-project-detail' p.id %}">Xem chi tiết</a>
+                            {% elif p.slug %}
+                                <a class="btn-detail" href="{% url 'portal:public-project-detail' p.slug %}">Xem chi tiết</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>Chưa có đề tài nào trong hệ thống.</p>
+                {% endfor %}
+            </div>
+
+            {% if page_obj and page_obj.paginator.num_pages > 1 %}
+                <div class="paging">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode }}">← Trang trước</a>
+                    {% endif %}
+
+                    <span class="paging-info">
+                        Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}">Trang sau →</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
 {% endblock %}
