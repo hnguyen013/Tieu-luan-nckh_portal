@@ -38,7 +38,7 @@ def lecturer_list(request):
         lecturers = lecturers.filter(faculty_id=faculty_id)
 
     lecturers = lecturers.select_related("faculty").order_by("mgv")
-    faculties = Faculty.objects.all().order_by("sort_order", "name")
+    faculties = Faculty.objects.all().order_by("name")
 
     context = {
         "lecturers": lecturers,

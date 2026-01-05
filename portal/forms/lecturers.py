@@ -36,7 +36,7 @@ class AdminLecturerForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         # Dropdown KHOA (Faculty)
-        self.fields["faculty"].queryset = Faculty.objects.all().order_by("sort_order", "name")
+        self.fields["faculty"].queryset = Faculty.objects.all().order_by("name")
 
         self.fields["faculty"].empty_label = "— Chọn khoa —"
 
