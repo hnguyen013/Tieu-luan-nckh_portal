@@ -41,9 +41,10 @@ urlpatterns = [
     name="public-project-detail",
     ),
 
+    # Public giảng viên
     path("lecturers/", public_lecturer_list, name="public-lecturer-list"),
     path(
-        "lecturers/<str:lecturer_id>/",
+        "lecturers/<str:mgv>/",
         public_lecturer_detail,
         name="public-lecturer-detail",
     ),

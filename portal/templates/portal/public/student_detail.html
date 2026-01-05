@@ -35,10 +35,13 @@
 
             <ul class="student-meta">
                 <li><strong>MSSV:</strong> {{ student.mssv }}</li>
-                <li><strong>Lớp:</strong> {{ student.class_name }}</li>
+                <li><strong>Ngày sinh:</strong> {{ student.date_of_birth|date:"d/m/Y" }}</li>
+                <li><strong>Giới tính:</strong> {{ student.get_gender_display }}</li>
                 <li><strong>Ngành:</strong> {{ student.major }}</li>
                 <li><strong>Khoa:</strong> {{ student.faculty.name }}</li>
-                <li><strong>Khóa:</strong> {{ student.course.name }}</li>
+                <li><strong>Khóa:</strong> {{ student.course.code }}{% if student.course.name %} - {{ student.course.name }}{% endif %}</li>
+                <li><strong>Tình trạng:</strong> {{ student.get_status_display }}</li>
+                <li><strong>Địa chỉ:</strong> {{ student.address|default:"—" }}</li>
                 <li><strong>Email:</strong> {{ student.email|default:"—" }}</li>
             </ul>
 

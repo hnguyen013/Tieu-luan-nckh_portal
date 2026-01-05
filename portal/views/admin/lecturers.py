@@ -12,7 +12,7 @@ from portal.models import Lecturer, Faculty
 def lecturer_list(request):
     """
     US 3.4 — Xem danh sách giảng viên
-    - Tìm kiếm theo: mã GV, họ tên, khoa
+    - Tìm kiếm theo: mã GV, họ tên, khoa, email, sđt
     """
 
     q = (request.GET.get("q") or "").strip()
@@ -26,7 +26,7 @@ def lecturer_list(request):
 
     if q:
         lecturers = lecturers.filter(
-            Q(lecturer_id__icontains=q)
+            Q(mgv__icontains=q)
             | Q(full_name__icontains=q)
             | Q(email__icontains=q)
             | Q(phone_number__icontains=q)
@@ -37,8 +37,8 @@ def lecturer_list(request):
     if faculty_id:
         lecturers = lecturers.filter(faculty_id=faculty_id)
 
-    lecturers = lecturers.select_related("faculty").order_by("lecturer_id")
-    faculties = Faculty.objects.filter(is_active=True).order_by("sort_order", "name")
+    lecturers = lecturers.select_related("faculty").order_by("mgv")
+    faculties = Faculty.objects.all().order_by("name")
 
     context = {
         "lecturers": lecturers,
@@ -61,7 +61,7 @@ def lecturer_create(request):
             lecturer = form.save()
             messages.success(
                 request,
-                f"Thêm giảng viên thành công: {lecturer.lecturer_id} - {lecturer.full_name}.",
+                f"Thêm giảng viên thành công: {lecturer.mgv} - {lecturer.full_name}.",
             )
             return redirect("portal:admin-lecturer-list")
     else:
@@ -91,7 +91,7 @@ def lecturer_edit(request, lecturer_pk: int):
             lecturer = form.save()
             messages.success(
                 request,
-                f"Cập nhật giảng viên thành công: {lecturer.lecturer_id} - {lecturer.full_name}.",
+                f"Cập nhật giảng viên thành công: {lecturer.mgv} - {lecturer.full_name}.",
             )
             return redirect("portal:admin-lecturer-list")
     else:
@@ -102,7 +102,7 @@ def lecturer_edit(request, lecturer_pk: int):
         "portal/lecturers/lecturer_form.html",
         {
             "form": form,
-            "title": f"Sửa giảng viên: {lecturer.lecturer_id}",
+            "title": f"Sửa giảng viên: {lecturer.mgv}",
             "submit_label": "Lưu thay đổi",
         },
     )
@@ -116,11 +116,11 @@ def lecturer_toggle_active(request, lecturer_pk: int):
     """
     lecturer = get_object_or_404(Lecturer, pk=lecturer_pk)
     lecturer.is_active = not lecturer.is_active
-    lecturer.save()
+    lecturer.save(update_fields=["is_active", "updated_at"])
 
     if lecturer.is_active:
-        messages.success(request, f"Đã kích hoạt lại giảng viên {lecturer.lecturer_id}.")
+        messages.success(request, f"Đã kích hoạt lại giảng viên {lecturer.mgv}.")
     else:
-        messages.success(request, f"Đã ngừng sử dụng giảng viên {lecturer.lecturer_id}.")
+        messages.success(request, f"Đã ngừng sử dụng giảng viên {lecturer.mgv}.")
 
     return redirect("portal:admin-lecturer-list")

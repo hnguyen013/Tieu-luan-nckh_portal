@@ -1,7 +1,6 @@
 # portal/forms/students.py
-
 from django import forms
-from portal.models import Student, Faculty, Course
+from portal.models import Student, Faculty, Course, Major
 
 
 class AdminStudentForm(forms.ModelForm):
@@ -10,47 +9,51 @@ class AdminStudentForm(forms.ModelForm):
         fields = [
             "mssv",
             "full_name",
-            "year_of_birth",
+            "date_of_birth",
             "gender",
-            "class_name",
             "major",
-            "course",
             "faculty",
+            "course",
+            "address",
             "email",
-            "avatar",      
-            "is_active",
+            "avatar",
+            "status",
         ]
         widgets = {
-            "year_of_birth": forms.NumberInput(attrs={"min": 1900, "max": 2100}),
-            "gender": forms.Select(choices=[("M", "Nam"), ("F", "Nữ"), ("O", "Khác")]),
-            "avatar": forms.ClearableFileInput(attrs={"accept": "image/*"}),  # 👈 widget upload ảnh
+            "date_of_birth": forms.DateInput(attrs={"type": "date"}),
+            "gender": forms.Select(choices=[("M", "Nam"), ("F", "Nữ")]),
+            "status": forms.Select(
+                choices=[
+                    ("studying", "Đang học"),
+                    ("leave", "Nghỉ"),
+                    ("reserved", "Bảo lưu"),
+                    ("graduated", "Tốt nghiệp"),
+                ]
+            ),
+            "avatar": forms.ClearableFileInput(attrs={"accept": "image/*"}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # Dropdown NGÀNH (Major)
+        self.fields["major"].queryset = Major.objects.all().order_by("name")
+        self.fields["major"].empty_label = "— Chọn ngành —"
+
         # Dropdown KHOA (Faculty)
-        self.fields["faculty"].queryset = Faculty.objects.filter(
-            is_active=True
-        ).order_by("sort_order", "name")
+        self.fields["faculty"].queryset = Faculty.objects.all().order_by("name")
         self.fields["faculty"].empty_label = "— Chọn khoa —"
 
         # Dropdown KHÓA HỌC (Course)
-        self.fields["course"].queryset = Course.objects.filter(
-            is_active=True
-        ).order_by("sort_order", "code")
+        self.fields["course"].queryset = Course.objects.all().order_by("name")
         self.fields["course"].empty_label = "— Chọn khóa học —"
 
-        # Không bắt buộc phải chọn khoa/khóa
-        self.fields["faculty"].required = False
-        self.fields["course"].required = False
-
-        # Các placeholder cho đẹp
+        # Placeholder
         self.fields["mssv"].widget.attrs.update({"placeholder": "VD: 21T102345"})
         self.fields["full_name"].widget.attrs.update({"placeholder": "Họ tên sinh viên"})
-        self.fields["class_name"].widget.attrs.update({"placeholder": "VD: K45 Tin"})
-        self.fields["major"].widget.attrs.update({"placeholder": "VD: Sư phạm Tin học"})
         self.fields["email"].widget.attrs.update({"placeholder": "VD: sv@hueuni.edu.vn"})
+        self.fields["address"].widget.attrs.update({"placeholder": "Địa chỉ liên hệ (có thể bỏ trống)"})
 
-        # Avatar không bắt buộc
+        # Optional fields
         self.fields["avatar"].required = False
+        self.fields["address"].required = False

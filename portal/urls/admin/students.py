@@ -19,9 +19,6 @@ urlpatterns = [
         views.student_edit,
         name="admin-student-edit",
     ),
-    path(
-        "admin-panel/students/<int:student_id>/toggle-active/",
-        views.student_toggle_active,
-        name="admin-student-toggle-active",
-    ),
+    path("students/<int:student_id>/toggle-active/", views.student_toggle_active, name="admin-student-toggle-active"),
+
 ]

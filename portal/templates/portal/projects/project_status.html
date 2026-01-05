@@ -49,8 +49,8 @@
         <a href="{% url 'portal:admin-project-list' %}" class="btn-secondary">Quay lại</a>
     </form>
 
-    {# Hiển thị log nếu bạn đã có status_logs #}
-    {% if project.status_logs.all %}
+    {# Hiển thị log nếu có #}
+    {% if project.status_logs.exists %}
         <div style="margin-top: 18px;">
             <h3 style="margin-bottom: 10px;">Lịch sử chuyển trạng thái</h3>
             <table class="table">

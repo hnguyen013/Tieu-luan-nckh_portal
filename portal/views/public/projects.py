@@ -1,3 +1,4 @@
+# portal/views/public/projects.py
 from django.shortcuts import render, get_object_or_404
 from portal.models import Project
 
@@ -9,8 +10,8 @@ def public_project_list(request):
     projects = (
         Project.objects.filter(
             status__in=[
-                Project.Status.IN_PROGRESS,  # Đang thực hiện
-                Project.Status.ACCEPTED,     # Đã nghiệm thu
+                Project.Status.IN_PROGRESS,
+                Project.Status.ACCEPTED,
             ],
             is_active=True,
         )
@@ -19,10 +20,7 @@ def public_project_list(request):
             "academic_year",
             "project_type",
         )
-        .prefetch_related(
-            "fields",              # 👈 LĨNH VỰC
-        )
-        .order_by("-created_at")   # 👈 mới nhất lên trước (rất nên)
+        .order_by("-created_at")
     )
 
     return render(
@@ -33,6 +31,7 @@ def public_project_list(request):
         },
     )
 
+
 def public_project_detail(request, code):
     project = get_object_or_404(
         Project.objects.select_related(
@@ -40,7 +39,6 @@ def public_project_detail(request, code):
             "academic_year",
             "project_type",
         ).prefetch_related(
-            "fields",
             "project_students",
             "project_lecturers",
         ),
