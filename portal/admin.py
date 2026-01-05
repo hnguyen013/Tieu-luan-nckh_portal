@@ -4,20 +4,21 @@ from portal.models import Faculty, Course, Student
 
 @admin.register(Faculty)
 class FacultyAdmin(admin.ModelAdmin):
-    list_display = ("code", "name", "is_active", "sort_order")
-    list_filter = ("is_active",)
-    search_fields = ("code", "name")
+    list_display = ("id", "name")
+    search_fields = ("name",)
+    ordering = ("name",)
 
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ("code", "name", "start_year", "end_year", "is_active", "sort_order")
-    list_filter = ("is_active", "start_year")
-    search_fields = ("code", "name")
+    list_display = ("id", "name")  # đổi theo field thật của Course
+    search_fields = ("name",)
+    ordering = ("name",)
 
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ("mssv", "full_name", "class_name", "major", "course", "faculty", "is_active")
-    list_filter = ("is_active", "course", "faculty")
-    search_fields = ("mssv", "full_name", "class_name", "major")
+    list_display = ("mssv", "full_name", "gender", "date_of_birth", "major", "course", "faculty", "status", "email")
+    list_filter = ("status", "course", "faculty", "gender")
+    search_fields = ("mssv", "full_name", "major", "email")
+
