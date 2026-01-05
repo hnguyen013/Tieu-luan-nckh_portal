@@ -31,8 +31,9 @@ def student_list_public(request):
 
     students = students.select_related("faculty", "course").order_by("mssv")
 
-    faculty_list = Faculty.objects.filter(is_active=True).order_by("sort_order", "name")
-    course_list = Course.objects.filter(is_active=True).order_by("sort_order", "code")
+    faculty_list = Faculty.objects.all().order_by("name")
+    course_list = Course.objects.all().order_by("name")
+
 
     context = {
         "students": students,
