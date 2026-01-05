@@ -5,6 +5,7 @@ from .major import Major
 from .academic_years import AcademicYear
 from .project_types import ProjectType
 from .lecturer import Lecturer
+from .research_field import ResearchField
 from .projects import (
     Project,
     ProjectStudent,
@@ -26,4 +27,5 @@ __all__ = [
     "ProjectStatusLog",
     "Lecturer",
     "Major",
+    "ResearchField",
 ]

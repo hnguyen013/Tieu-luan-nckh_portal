@@ -44,10 +44,96 @@
         </div>
 
         <div class="form-group">
-            <label for="{{ form.summary.id_for_label }}">Tóm tắt</label>
+            <label for="{{ form.project_level.id_for_label }}">
+                Cấp đề tài <span class="required">*</span>
+            </label>
+            {{ form.project_level }}
+            {% if form.project_level.errors %}
+                <div class="field-error">{{ form.project_level.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.research_field.id_for_label }}">
+                Lĩnh vực <span class="required">*</span>
+            </label>
+            {{ form.research_field }}
+            {% if form.research_field.errors %}
+                <div class="field-error">{{ form.research_field.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.host_organization.id_for_label }}">
+                Đơn vị chủ trì <span class="required">*</span>
+            </label>
+            {{ form.host_organization }}
+            {% if form.host_organization.errors %}
+                <div class="field-error">{{ form.host_organization.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.implementing_organization.id_for_label }}">
+                Đơn vị thực hiện <span class="required">*</span>
+            </label>
+            {{ form.implementing_organization }}
+            {% if form.implementing_organization.errors %}
+                <div class="field-error">{{ form.implementing_organization.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.objectives.id_for_label }}">Mục tiêu</label>
+            {{ form.objectives }}
+            {% if form.objectives.errors %}
+                <div class="field-error">{{ form.objectives.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.summary.id_for_label }}">Nội dung</label>
             {{ form.summary }}
             {% if form.summary.errors %}
                 <div class="field-error">{{ form.summary.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.budget.id_for_label }}">Kinh phí</label>
+            {{ form.budget }}
+            {% if form.budget.errors %}
+                <div class="field-error">{{ form.budget.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.category.id_for_label }}">
+                Phân loại <span class="required">*</span>
+            </label>
+            {{ form.category }}
+            {% if form.category.errors %}
+                <div class="field-error">{{ form.category.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.start_year.id_for_label }}">
+                Ngày bắt đầu <span class="required">*</span>
+            </label>
+            {{ form.start_year }}
+            {% if form.start_year.errors %}
+                <div class="field-error">{{ form.start_year.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.end_year.id_for_label }}">
+                Ngày kết thúc <span class="required">*</span>
+            </label>
+            {{ form.end_year }}
+            {% if form.end_year.errors %}
+                <div class="field-error">{{ form.end_year.errors|striptags }}</div>
             {% endif %}
         </div>
 
@@ -118,49 +204,46 @@
 
     <!-- ================= SINH VIÊN THAM GIA ================= -->
     <div class="admin-form-card">
-    <div class="admin-form-title">Sinh viên tham gia</div>
+        <div class="admin-form-title">Sinh viên tham gia</div>
 
-    <div class="form-two-columns">
+        <div class="form-two-columns">
 
-        <!-- CỘT TRÁI: DANH SÁCH ĐÃ CHỌN -->
-        <div class="selected-box">
-            <ul id="selectedStudents" class="selected-list selected-chip-list">
+            <!-- CỘT TRÁI: DANH SÁCH ĐÃ CHỌN -->
+            <div class="selected-box">
+                <ul id="selectedStudents" class="selected-list selected-chip-list"></ul>
+            </div>
 
-            </ul>
-        </div>
+            <!-- CỘT PHẢI: SELECT -->
+            <div class="form-group">
+                <label>Chọn sinh viên <span class="required">*</span></label>
 
-        <!-- CỘT PHẢI: SELECT -->
-        <div class="form-group">
-            <label>Chọn sinh viên <span class="required">*</span></label>
+                <input type="text"
+                       id="studentFilter"
+                       class="filter-input"
+                       placeholder="Gõ để tìm MSSV / tên sinh viên...">
 
-            <input type="text"
-                   id="studentFilter"
-                   class="filter-input"
-                   placeholder="Gõ để tìm MSSV / tên sinh viên...">
+                {{ form.student_ids }}
 
-            {{ form.student_ids }}
+                {% if form.student_ids.errors %}
+                    <div class="field-error">{{ form.student_ids.errors|striptags }}</div>
+                {% endif %}
 
-            {% if form.student_ids.errors %}
-                <div class="field-error">{{ form.student_ids.errors|striptags }}</div>
-            {% endif %}
-
-            <div class="help-text">
-                Có thể chọn nhiều sinh viên (giữ Ctrl / Shift).
+                <div class="help-text">
+                    Có thể chọn nhiều sinh viên (giữ Ctrl / Shift).
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label for="{{ form.leader_student_id.id_for_label }}">
-            Trưởng nhóm
-        </label>
-        {{ form.leader_student_id }}
-        {% if form.leader_student_id.errors %}
-            <div class="field-error">{{ form.leader_student_id.errors|striptags }}</div>
-        {% endif %}
+        <div class="form-group">
+            <label for="{{ form.leader_student_id.id_for_label }}">
+                Trưởng nhóm
+            </label>
+            {{ form.leader_student_id }}
+            {% if form.leader_student_id.errors %}
+                <div class="field-error">{{ form.leader_student_id.errors|striptags }}</div>
+            {% endif %}
+        </div>
     </div>
-</div>
-
 
     <!-- ================= FILE ĐÍNH KÈM ================= -->
     <div class="admin-form-card">
@@ -253,37 +336,33 @@
     if (!select || !list) return;
 
     function renderSelected() {
-    const selected = Array.from(select.selectedOptions);
-    const leader = document.getElementById("id_leader_student_id")?.value;
+        const selected = Array.from(select.selectedOptions);
+        const leader = document.getElementById("id_leader_student_id")?.value;
 
-    list.innerHTML = "";
+        list.innerHTML = "";
 
-    if (selected.length === 0) {
-        const li = document.createElement("li");
-        li.className = "empty";
-        li.textContent = "Chưa chọn sinh viên nào";
-        list.appendChild(li);
-        return;
-    }
-
-    selected.forEach(opt => {
-        const li = document.createElement("li");
-        li.textContent = opt.text;
-
-        if (leader && opt.value === leader) {
-            li.classList.add("leader");
-            li.textContent += " ★ Trưởng nhóm";
+        if (selected.length === 0) {
+            const li = document.createElement("li");
+            li.className = "empty";
+            li.textContent = "Chưa chọn sinh viên nào";
+            list.appendChild(li);
+            return;
         }
 
-        list.appendChild(li);
-    });
-}
+        selected.forEach(opt => {
+            const li = document.createElement("li");
+            li.textContent = opt.text;
 
+            if (leader && opt.value === leader) {
+                li.classList.add("leader");
+                li.textContent += " ★ Trưởng nhóm";
+            }
 
-    // Lắng nghe khi chọn / bỏ chọn
+            list.appendChild(li);
+        });
+    }
+
     select.addEventListener("change", renderSelected);
-
-    // Render lần đầu (trường hợp edit form)
     renderSelected();
 })();
 </script>

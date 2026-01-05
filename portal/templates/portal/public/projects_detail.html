@@ -3,7 +3,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>{{ project.name }}</title>
+    <title>{{ project.title }}</title>
     <link rel="stylesheet" href="{% static 'portal/css/public_home.css' %}">
     <link rel="stylesheet" href="{% static 'portal/css/project_detail.css' %}">
 </head>
@@ -28,7 +28,23 @@
                 </tr>
                 <tr>
                     <th>Tên đề tài</th>
-                    <td>{{ project.name }}</td>
+                    <td>{{ project.title }}</td>
+                </tr>
+                <tr>
+                    <th>Cấp đề tài</th>
+                    <td>{{ project.project_level }}</td>
+                </tr>
+                <tr>
+                    <th>Lĩnh vực</th>
+                    <td>{{ project.research_field }}</td>
+                </tr>
+                <tr>
+                    <th>Đơn vị chủ trì</th>
+                    <td>{{ project.host_organization }}</td>
+                </tr>
+                <tr>
+                    <th>Đơn vị thực hiện</th>
+                    <td>{{ project.implementing_organization }}</td>
                 </tr>
                 <tr>
                     <th>Loại đề tài</th>
@@ -43,13 +59,41 @@
                     <td>{{ project.academic_year.name }}</td>
                 </tr>
                 <tr>
+                    <th>Thời gian</th>
+                    <td>
+                        {{ project.start_year|date:"d/m/Y" }} → {{ project.end_year|date:"d/m/Y" }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Kinh phí</th>
+                    <td>
+                        {% if project.budget is not None %}
+                            {{ project.budget }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Phân loại</th>
+                    <td>{{ project.category }}</td>
+                </tr>
+                <tr>
                     <th>Tình trạng</th>
                     <td>{{ project.get_status_display }}</td>
                 </tr>
-                {% if project.description %}
+
+                {% if project.objectives %}
                 <tr>
-                    <th>Mô tả</th>
-                    <td>{{ project.description }}</td>
+                    <th>Mục tiêu</th>
+                    <td>{{ project.objectives }}</td>
+                </tr>
+                {% endif %}
+
+                {% if project.summary %}
+                <tr>
+                    <th>Nội dung</th>
+                    <td>{{ project.summary }}</td>
                 </tr>
                 {% endif %}
             </table>

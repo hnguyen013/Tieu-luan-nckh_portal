@@ -1,16 +1,16 @@
+{# portal/templates/portal/public/projects_list.html #}
 {% extends "portal/home_base.html" %}
 {% load static %}
 
 {% block title %}Dữ liệu đề tài - Đề tài nghiên cứu khoa học{% endblock %}
 
 {% block extra_css %}
-    <!-- CSS redesign cho trang projects_list -->
     <link rel="stylesheet" href="{% static 'portal/css/projects_list.css' %}">
 {% endblock %}
 
 {% block content %}
 
-    <!-- HERO giống students_list + ô lọc theo ảnh 2 -->
+    <!-- HERO -->
     <section class="hero">
         <div class="hero-overlay"></div>
         <div class="container hero-content">
@@ -20,7 +20,7 @@
                     <span class="title-line-2">Tra cứu đề tài khoa học</span>
                 </h1>
                 <p class="hero-subtitle">
-                    Lọc theo đơn vị, tác giả, cấp đề tài, lĩnh vực, thời điểm và từ khóa để tìm nhanh đề tài trong toàn trường.
+                    Lọc theo đơn vị, cấp đề tài, lĩnh vực, thời điểm và từ khóa để tìm nhanh đề tài trong toàn trường.
                 </p>
             </div>
 
@@ -29,42 +29,18 @@
                     <h2>Lọc <span class="highlight">Đề tài</span></h2>
 
                     <form method="get" action="{% url 'portal:public-project-list' %}" class="filter-form">
-                        <select name="unit_id">
-                            <option value="">--Chọn đơn vị--</option>
-                            {% for u in unit_list %}
-                                <option value="{{ u.id }}" {% if u.id|stringformat:"s" == unit_id %}selected{% endif %}>
-                                    {{ u.name }}
-                                </option>
-                            {% endfor %}
-                        </select>
-
-                        <select name="author_id">
-                            <option value="">--Chọn tác giả--</option>
-                            {% for a in author_list %}
-                                <option value="{{ a.id }}" {% if a.id|stringformat:"s" == author_id %}selected{% endif %}>
-                                    {{ a.full_name|default:a.name }}
+                        <select name="faculty_id">
+                            <option value="">--Chọn khoa--</option>
+                            {% for fac in faculty_list %}
+                                <option value="{{ fac.id }}" {% if fac.id|stringformat:"s" == faculty_id %}selected{% endif %}>
+                                    {{ fac.name }}
                                 </option>
                             {% endfor %}
                         </select>
 
                         <div class="filter-grid-2">
-                            <select name="level_id">
-                                <option value="">--Chọn cấp đề tài--</option>
-                                {% for lv in level_list %}
-                                    <option value="{{ lv.id }}" {% if lv.id|stringformat:"s" == level_id %}selected{% endif %}>
-                                        {{ lv.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-
-                            <select name="field_id">
-                                <option value="">--Chọn lĩnh vực--</option>
-                                {% for f in field_list %}
-                                    <option value="{{ f.id }}" {% if f.id|stringformat:"s" == field_id %}selected{% endif %}>
-                                        {{ f.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                            <input type="text" name="project_level" placeholder="Cấp đề tài (vd: Cấp Khoa)" value="{{ project_level }}">
+                            <input type="text" name="research_field" placeholder="Lĩnh vực (vd: CNTT)" value="{{ research_field }}">
                         </div>
 
                         <div class="filter-grid-2">
@@ -73,7 +49,7 @@
                         </div>
 
                         <div class="filter-grid-key">
-                            <input type="text" name="q" placeholder="Từ khóa tìm kiếm" value="{{ q }}">
+                            <input type="text" name="q" placeholder="Từ khóa (mã/tên/đơn vị...)" value="{{ q }}">
                             <button type="submit">Tìm kiếm</button>
                         </div>
                     </form>
@@ -90,11 +66,7 @@
 
                 <div class="results-actions">
                     <div class="results-count">
-                        {% if page_obj %}
-                            {{ page_obj.start_index }} - {{ page_obj.end_index }} / {{ page_obj.paginator.count }} KẾT QUẢ
-                        {% else %}
-                            {{ projects|length }} KẾT QUẢ
-                        {% endif %}
+                        {{ projects|length }} KẾT QUẢ
                     </div>
 
                     {% if export_url %}
@@ -108,49 +80,30 @@
                     <div class="project-card">
                         <div class="project-top">
                             <div class="project-main">
-                                <h3 class="project-title">{{ p.title|default:p.name }}</h3>
+                                <h3 class="project-title">{{ p.title }}</h3>
 
                                 <p class="project-meta">
-                                    {% if p.field %}<strong>Lĩnh vực:</strong> {{ p.field }}{% endif %}
-                                    {% if p.unit %} &nbsp;|&nbsp; <strong>Đơn vị:</strong> {{ p.unit }}{% endif %}
-                                    {% if p.executor_unit %}<br><strong>Đơn vị thực hiện:</strong> {{ p.executor_unit }}{% endif %}
-                                    {% if p.owner %}<br><strong>Người tham gia:</strong> {{ p.owner }}{% endif %}
+                                    <strong>Lĩnh vực:</strong> {{ p.research_field }}
+                                    &nbsp;|&nbsp;
+                                    <strong>Cấp đề tài:</strong> {{ p.project_level }}
+                                    <br>
+                                    <strong>Đơn vị chủ trì:</strong> {{ p.host_organization }}
+                                    <br>
+                                    <strong>Đơn vị quản lý:</strong> {{ p.faculty.name }}
                                 </p>
                             </div>
 
-                            {% if p.code %}
-                                <div class="project-badge">{{ p.code }}</div>
-                            {% endif %}
+                            <div class="project-badge">{{ p.code }}</div>
                         </div>
 
                         <div class="project-actions">
-                            {% if p.id %}
-                                <a class="btn-detail" href="{% url 'portal:public-project-detail' p.id %}">Xem chi tiết</a>
-                            {% elif p.slug %}
-                                <a class="btn-detail" href="{% url 'portal:public-project-detail' p.slug %}">Xem chi tiết</a>
-                            {% endif %}
+                            <a class="btn-detail" href="{% url 'portal:public-project-detail' p.code %}">Xem chi tiết</a>
                         </div>
                     </div>
                 {% empty %}
                     <p>Chưa có đề tài nào trong hệ thống.</p>
                 {% endfor %}
             </div>
-
-            {% if page_obj and page_obj.paginator.num_pages > 1 %}
-                <div class="paging">
-                    {% if page_obj.has_previous %}
-                        <a href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode }}">← Trang trước</a>
-                    {% endif %}
-
-                    <span class="paging-info">
-                        Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
-                    </span>
-
-                    {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}">Trang sau →</a>
-                    {% endif %}
-                </div>
-            {% endif %}
         </div>
     </section>
 

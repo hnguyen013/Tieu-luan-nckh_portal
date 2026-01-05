@@ -1,8 +1,7 @@
 # portal/forms/projects.py
 from django import forms
-from portal.models import (
-    Project, Faculty, AcademicYear, ProjectType, Student
-)
+from portal.models import Project, Faculty, AcademicYear, ProjectType, Student
+
 
 # ✅ Widget custom để cho phép multiple files
 class MultipleFileInput(forms.ClearableFileInput):
@@ -14,20 +13,20 @@ class AdminProjectForm(forms.ModelForm):
         label="Giảng viên hướng dẫn",
         required=True,
         widget=forms.SelectMultiple(attrs={"size": "6"}),
-        choices=[]
+        choices=[],
     )
 
     student_ids = forms.MultipleChoiceField(
         label="Sinh viên tham gia",
         required=True,
         widget=forms.SelectMultiple(attrs={"size": "8"}),
-        choices=[]
+        choices=[],
     )
 
     leader_student_id = forms.ChoiceField(
         label="Trưởng nhóm",
         required=True,
-        choices=[]
+        choices=[],
     )
 
     # ✅ dùng widget custom MultipleFileInput
@@ -40,22 +39,47 @@ class AdminProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = [
-            "code", "title", "summary",
-            "faculty", "academic_year", "project_type", "status",
+            "code",
+            "title",
+            "project_level",
+            "research_field",
+            "host_organization",
+            "implementing_organization",
+            "objectives",
+            "summary",
+            "budget",
+            "category",
+            "start_year",
+            "end_year",
+            "faculty",
+            "academic_year",
+            "project_type",
+            "status",
             "is_active",
         ]
         widgets = {
+            "objectives": forms.Textarea(attrs={"rows": 3}),
             "summary": forms.Textarea(attrs={"rows": 4}),
+            "start_year": forms.DateInput(attrs={"type": "date"}),
+            "end_year": forms.DateInput(attrs={"type": "date"}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields["faculty"].queryset = Faculty.objects.filter(is_active=True).order_by("sort_order", "name")
-        self.fields["academic_year"].queryset = AcademicYear.objects.filter(is_active=True).order_by("sort_order", "code")
-        self.fields["project_type"].queryset = ProjectType.objects.filter(is_active=True).order_by("sort_order", "name")
+        # Faculty: không có is_active/sort_order trong DB của bạn -> chỉ order theo name
+        self.fields["faculty"].queryset = Faculty.objects.all().order_by("name")
+        # AcademicYear / ProjectType: giữ như cũ (nếu model bạn có is_active/sort_order)
+        # Nếu sau này báo FieldError thì bạn đổi tương tự sang .all().order_by(...)
+        self.fields["academic_year"].queryset = AcademicYear.objects.filter(is_active=True).order_by(
+            "sort_order", "code"
+        )
+        self.fields["project_type"].queryset = ProjectType.objects.filter(is_active=True).order_by(
+            "sort_order", "name"
+        )
 
         from portal.models import Lecturer
+
         lecturers = Lecturer.objects.filter(is_active=True).order_by("full_name")
         self.fields["lecturer_ids"].choices = [(str(x.id), f"{x.full_name}") for x in lecturers]
 
@@ -64,6 +88,15 @@ class AdminProjectForm(forms.ModelForm):
         self.fields["leader_student_id"].choices = [("", "— Chọn trưởng nhóm —")] + [
             (str(x.id), f"{x.mssv} - {x.full_name}") for x in students
         ]
+
+        # Placeholders (cho dễ nhập)
+        self.fields["code"].widget.attrs.update({"placeholder": "VD: DT2026-001"})
+        self.fields["title"].widget.attrs.update({"placeholder": "Tên đề tài"})
+        self.fields["project_level"].widget.attrs.update({"placeholder": "VD: Cấp Khoa / Cấp Trường / Cấp Bộ"})
+        self.fields["research_field"].widget.attrs.update({"placeholder": "VD: CNTT / Kinh tế / Giáo dục..."})
+        self.fields["host_organization"].widget.attrs.update({"placeholder": "Đơn vị chủ trì"})
+        self.fields["implementing_organization"].widget.attrs.update({"placeholder": "Đơn vị thực hiện"})
+        self.fields["category"].widget.attrs.update({"placeholder": "VD: Báo cáo / Sản phẩm / Bài báo..."})
 
     def clean_code(self):
         code = (self.cleaned_data.get("code") or "").strip()
@@ -84,5 +117,11 @@ class AdminProjectForm(forms.ModelForm):
             self.add_error("student_ids", "Phải chọn ít nhất 1 sinh viên tham gia.")
         if leader_id and student_ids and (leader_id not in student_ids):
             self.add_error("leader_student_id", "Trưởng nhóm phải nằm trong danh sách sinh viên tham gia.")
+
+        # validate thời gian
+        start = cleaned.get("start_year")
+        end = cleaned.get("end_year")
+        if start and end and end < start:
+            self.add_error("end_year", "Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.")
 
         return cleaned

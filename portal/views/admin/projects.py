@@ -7,23 +7,35 @@ from django.shortcuts import get_object_or_404, redirect, render
 from portal.decorators import admin_required
 from portal.forms.projects import AdminProjectForm
 from portal.models import (
-    Project, ProjectLecturer, ProjectStudent, ProjectAttachment, ProjectStatusLog
+    Project,
+    ProjectLecturer,
+    ProjectStudent,
+    ProjectAttachment,
+    ProjectStatusLog,
 )
-
 
 
 @admin_required
 def project_list(request):
     q = (request.GET.get("q") or "").strip()
     status = (request.GET.get("status") or "").strip()
+    include_inactive = request.GET.get("include_inactive") == "1"
 
     projects = Project.objects.all()
 
+    if not include_inactive:
+        projects = projects.filter(is_active=True)
+
     if q:
         projects = projects.filter(
-            Q(code__icontains=q) |
-            Q(title__icontains=q) |
-            Q(faculty__name__icontains=q)
+            Q(code__icontains=q)
+            | Q(title__icontains=q)
+            | Q(project_level__icontains=q)
+            | Q(research_field__icontains=q)
+            | Q(host_organization__icontains=q)
+            | Q(implementing_organization__icontains=q)
+            | Q(category__icontains=q)
+            | Q(faculty__name__icontains=q)
         )
 
     if status:
@@ -33,14 +45,17 @@ def project_list(request):
         "faculty", "academic_year", "project_type"
     ).order_by("-created_at")
 
-    return render(request, "portal/projects/project_list.html", {
-        "projects": projects,
-        "q": q,
-        "status": status,
-        "status_choices": Project.Status.choices,
-    })
-
-
+    return render(
+        request,
+        "portal/projects/project_list.html",
+        {
+            "projects": projects,
+            "q": q,
+            "status": status,
+            "include_inactive": include_inactive,
+            "status_choices": Project.Status.choices,
+        },
+    )
 
 @admin_required
 @transaction.atomic
@@ -61,7 +76,11 @@ def project_create(request):
             student_ids = form.cleaned_data["student_ids"]
             leader_id = int(form.cleaned_data["leader_student_id"])
             for sid in student_ids:
-                role = ProjectStudent.Role.LEADER if int(sid) == leader_id else ProjectStudent.Role.MEMBER
+                role = (
+                    ProjectStudent.Role.LEADER
+                    if int(sid) == leader_id
+                    else ProjectStudent.Role.MEMBER
+                )
                 ProjectStudent.objects.create(project=project, student_id=int(sid), role=role)
 
             # attachments (multiple)
@@ -70,7 +89,7 @@ def project_create(request):
                     project=project,
                     file=f,
                     original_name=getattr(f, "name", ""),
-                    uploaded_by=request.user
+                    uploaded_by=request.user,
                 )
 
             # log status create
@@ -79,7 +98,7 @@ def project_create(request):
                 from_status="",
                 to_status=project.status,
                 changed_by=request.user,
-                note="Tạo mới đề tài"
+                note="Tạo mới đề tài",
             )
 
             messages.success(request, f"Đã thêm đề tài: {project.code} - {project.title}")
@@ -87,11 +106,15 @@ def project_create(request):
     else:
         form = AdminProjectForm()
 
-    return render(request, "portal/projects/project_form.html", {
-        "form": form,
-        "title": "Thêm đề tài",
-        "submit_label": "Tạo đề tài",
-    })
+    return render(
+        request,
+        "portal/projects/project_form.html",
+        {
+            "form": form,
+            "title": "Thêm đề tài",
+            "submit_label": "Tạo đề tài",
+        },
+    )
 
 
 @admin_required
@@ -121,7 +144,11 @@ def project_edit(request, project_id: int):
             student_ids = form.cleaned_data["student_ids"]
             leader_id = int(form.cleaned_data["leader_student_id"])
             for sid in student_ids:
-                role = ProjectStudent.Role.LEADER if int(sid) == leader_id else ProjectStudent.Role.MEMBER
+                role = (
+                    ProjectStudent.Role.LEADER
+                    if int(sid) == leader_id
+                    else ProjectStudent.Role.MEMBER
+                )
                 ProjectStudent.objects.create(project=project, student_id=int(sid), role=role)
 
             # attachments append
@@ -130,7 +157,7 @@ def project_edit(request, project_id: int):
                     project=project,
                     file=f,
                     original_name=getattr(f, "name", ""),
-                    uploaded_by=request.user
+                    uploaded_by=request.user,
                 )
 
             # log status if changed
@@ -140,7 +167,7 @@ def project_edit(request, project_id: int):
                     from_status=old_status,
                     to_status=project.status,
                     changed_by=request.user,
-                    note="Cập nhật đề tài"
+                    note="Cập nhật đề tài",
                 )
 
             messages.success(request, f"Đã cập nhật đề tài: {project.code}")
@@ -155,21 +182,24 @@ def project_edit(request, project_id: int):
         if leader:
             form.initial["leader_student_id"] = str(leader.student_id)
 
-    return render(request, "portal/projects/project_form.html", {
-        "form": form,
-        "title": f"Sửa đề tài: {project.code}",
-        "submit_label": "Lưu thay đổi",
-        "project": project,
-    })
+    return render(
+        request,
+        "portal/projects/project_form.html",
+        {
+            "form": form,
+            "title": f"Sửa đề tài: {project.code}",
+            "submit_label": "Lưu thay đổi",
+            "project": project,
+        },
+    )
 
 
 @admin_required
 def project_toggle_active(request, project_id: int):
     project = get_object_or_404(Project, pk=project_id)
 
-    # Nếu đã nghiệm thu -> chỉ ẩn (tức is_active=False), không cho xóa cứng (ta đang không xóa cứng)
     project.is_active = not project.is_active
-    project.save(update_fields=["is_active"])
+    project.save(update_fields=["is_active", "updated_at"])
 
     if project.is_active:
         messages.success(request, f"Đã kích hoạt lại đề tài {project.code}.")
@@ -205,13 +235,17 @@ def project_update_status(request, project_id: int):
             from_status=old_status,
             to_status=new_status,
             changed_by=request.user,
-            note=note
+            note=note,
         )
 
         messages.success(request, "Cập nhật trạng thái thành công.")
         return redirect("portal:admin-project-list")
 
-    return render(request, "portal/projects/project_status.html", {
-        "project": project,
-        "status_choices": Project.Status.choices,
-    })
+    return render(
+        request,
+        "portal/projects/project_status.html",
+        {
+            "project": project,
+            "status_choices": Project.Status.choices,
+        },
+    )
