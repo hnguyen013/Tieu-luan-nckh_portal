@@ -1,8 +1,8 @@
-# portal/views/public/lecturer.py
+# portal/views/public/lecturers.py
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 
-from portal.models import Lecturer, Faculty, Project
+from portal.models import Lecturer, Faculty, Project, LecturerLanguage, LecturerSpecialty
 
 
 def public_lecturer_list(request):
@@ -24,7 +24,12 @@ def public_lecturer_list(request):
             | Q(faculty__name__icontains=q)
         )
 
-    lecturers = lecturers.select_related("faculty").order_by("mgv")
+    # ✅ prefetch cả languages + specialties
+    lecturers = (
+        lecturers.select_related("faculty")
+        .prefetch_related("languages", "specialties")
+        .order_by("mgv")
+    )
 
     context = {
         "lecturers": lecturers,
@@ -59,11 +64,19 @@ def public_lecturer_detail(request, mgv):
         .distinct()
     )
 
+    # ✅ ngoại ngữ
+    languages = LecturerLanguage.objects.filter(lecturer=lecturer).order_by("language")
+
+    # ✅ chuyên môn giảng dạy
+    specialties = LecturerSpecialty.objects.filter(lecturer=lecturer).order_by("specialty")
+
     return render(
         request,
         "portal/public/lecturer_detail.html",
         {
             "lecturer": lecturer,
             "projects": projects,
+            "languages": languages,
+            "specialties": specialties,
         },
     )

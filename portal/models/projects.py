@@ -4,12 +4,13 @@ from django.db import models
 
 
 class Project(models.Model):
-    class Status(models.TextChoices):
-        PROPOSED = "PROPOSED", "Đề xuất"
-        REVIEWING = "REVIEWING", "Đang xét duyệt"
-        IN_PROGRESS = "IN_PROGRESS", "Đang thực hiện"
-        ACCEPTED = "ACCEPTED", "Đã nghiệm thu"
-        REJECTED = "REJECTED", "Không duyệt"
+    """
+    Bảng PROJECT theo đúng skeleton:
+    ID (AutoField PK)
+    CODE, TITLE, PROJECT_LEVEL, RESEARCH_FIELD,
+    HOST_ORGANIZATION, IMPLEMENTING_ORGANIZATION,
+    SUMMARY, START_YEAR, END_YEAR, STATUS, BUDGET, CATEGORY, is_active
+    """
 
     class Category(models.TextChoices):
         SAMPLE = "SAMPLE", "Mẫu / Prototype"
@@ -18,69 +19,46 @@ class Project(models.Model):
         MATERIAL = "MATERIAL", "Tài liệu / Giáo trình"
         PAPER = "PAPER", "Bài báo khoa học"
 
-    # Mapping theo bảng DETAI
-    code = models.CharField(max_length=20, unique=True)   # MADETAI
-    title = models.CharField(max_length=255)              # TENDETAI
+    # CODE
+    code = models.CharField(max_length=20, unique=True)
 
-    # Các field mới thêm -> để nullable để khỏi lỗi migrate khi DB đã có row
-    project_level = models.CharField(max_length=50, null=True, blank=True)  # CAPDETAI
+    # TITLE
+    title = models.CharField(max_length=255)
 
-    research_field = models.ForeignKey(  # LINHVUC
-        "portal.ResearchField",
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-    )
+    # PROJECT_LEVEL
+    project_level = models.CharField(max_length=50)
 
-    host_organization = models.CharField(  # DONVICHUTRI
-        max_length=255,
-        null=True,
-        blank=True,
-    )
-    implementing_organization = models.CharField(  # DONVITHUCHIEN
-        max_length=255,
-        null=True,
-        blank=True,
-    )
+    # RESEARCH_FIELD (nhập tay, không FK)
+    research_field = models.CharField(max_length=100)
 
-    # NOIDUNG
-    summary = models.TextField(blank=True)
+    # HOST_ORGANIZATION
+    host_organization = models.CharField(max_length=255)
 
-    # MUCTIEU
-    objectives = models.CharField(max_length=1000, null=True, blank=True)
+    # IMPLEMENTING_ORGANIZATION
+    implementing_organization = models.CharField(max_length=255)
 
-    # KINHPHI
+    # SUMMARY (VARCHAR 2000, nullable)
+    summary = models.CharField(max_length=2000, null=True, blank=True)
+
+    # START_YEAR / END_YEAR (Not Null)
+    start_year = models.DateField()
+    end_year = models.DateField()
+
+    # STATUS (BOOLEAN default FALSE)
+    status = models.BooleanField(default=False)
+
+    # BUDGET (nullable)
     budget = models.FloatField(null=True, blank=True)
 
-    # PHANLOAI (có default -> không bị hỏi khi migrate)
+    # CATEGORY (Not Null)
     category = models.CharField(
         max_length=20,
         choices=Category.choices,
         default=Category.SAMPLE,
     )
 
-    # NAMBATDAU / NAMKETTHUC (nullable để khỏi bị hỏi)
-    start_year = models.DateField(null=True, blank=True)
-    end_year = models.DateField(null=True, blank=True)
-
-    # Trạng thái hệ thống + soft delete
-    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PROPOSED)
+    # is_active (soft delete / active flag)
     is_active = models.BooleanField(default=True)
-
-    # FK hệ thống
-    faculty = models.ForeignKey("portal.Faculty", on_delete=models.PROTECT)
-    academic_year = models.ForeignKey("portal.AcademicYear", on_delete=models.PROTECT)
-    project_type = models.ForeignKey("portal.ProjectType", on_delete=models.PROTECT)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="created_projects",
-    )
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = "portal_project"
@@ -99,7 +77,9 @@ class ProjectLecturer(models.Model):
     role = models.CharField(max_length=50, default="Hướng dẫn")
 
     class Meta:
-        unique_together = ("project", "lecturer")
+        constraints = [
+            models.UniqueConstraint(fields=["project", "lecturer"], name="uq_project_lecturer")
+        ]
 
 
 class ProjectStudent(models.Model):
@@ -112,7 +92,9 @@ class ProjectStudent(models.Model):
     role = models.CharField(max_length=10, choices=Role.choices, default=Role.MEMBER)
 
     class Meta:
-        unique_together = ("project", "student")
+        constraints = [
+            models.UniqueConstraint(fields=["project", "student"], name="uq_project_student")
+        ]
 
 
 def project_upload_path(instance, filename):
@@ -130,17 +112,3 @@ class ProjectAttachment(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
-
-
-class ProjectStatusLog(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="status_logs")
-    from_status = models.CharField(max_length=20, blank=True)
-    to_status = models.CharField(max_length=20)
-    changed_at = models.DateTimeField(auto_now_add=True)
-    changed_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-    note = models.CharField(max_length=255, blank=True)

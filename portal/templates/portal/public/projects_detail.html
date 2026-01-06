@@ -18,6 +18,7 @@
 
 <section class="project-detail">
     <div class="container">
+
         <div class="detail-card">
             <h2 class="detail-title">Thông tin đề tài</h2>
 
@@ -98,6 +99,85 @@
                 {% endif %}
             </table>
         </div>
+
+        {# ✅ THÊM CARD: KẾT QUẢ CHẤM #}
+        <div class="detail-card" style="margin-top: 16px;">
+            <h2 class="detail-title">Kết quả chấm</h2>
+
+            {% if council %}
+                <table class="detail-table">
+                    <tr>
+                        <th>Mã hội đồng</th>
+                        <td>{{ council.code }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tên hội đồng</th>
+                        <td>{{ council.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ngày chấm</th>
+                        <td>
+                            {% if council.grading_date %}
+                                {{ council.grading_date|date:"d/m/Y" }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Điểm tổng</th>
+                        <td>
+                            {% if council.total_score is not None %}
+                                {{ council.total_score }}
+                            {% else %}
+                                Chưa có điểm
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Kết quả</th>
+                        <td>
+                            {% if council.total_score is None %}
+                                —
+                            {% else %}
+                                {{ council.result }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+
+                <h3 style="margin-top: 12px;">Điểm thành phần</h3>
+                <table class="detail-table">
+                    <tr>
+                        <th>MGV</th>
+                        <th>Họ tên</th>
+                        <th>Vai trò</th>
+                        <th>Điểm</th>
+                    </tr>
+                    {% for m in council.members.all %}
+                        <tr>
+                            <td>{{ m.lecturer.mgv }}</td>
+                            <td>{{ m.lecturer.full_name }}</td>
+                            <td>{{ m.role }}</td>
+                            <td>
+                                {% if m.score is not None %}
+                                    {{ m.score }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">Chưa có thành viên hội đồng.</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p style="margin-top: 6px;">Chưa có hội đồng chấm cho đề tài này.</p>
+            {% endif %}
+        </div>
+
     </div>
 </section>
 
