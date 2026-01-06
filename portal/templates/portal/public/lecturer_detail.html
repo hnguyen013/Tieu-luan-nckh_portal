@@ -1,65 +1,168 @@
+{% extends "portal/home_base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Chi tiết giảng viên</title>
+{% block title %}Chi tiết giảng viên{% endblock %}
 
-    <link rel="stylesheet" href="{% static 'portal/css/public_home.css' %}">
-    <link rel="stylesheet" href="{% static 'portal/css/student_detail.css' %}">
-</head>
-<body>
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'portal/css/lecturer_detail.css' %}">
+{% endblock %}
 
-<div class="student-detail-container">
+{% block content %}
+<section class="ld-wrap">
+  <div class="container">
 
-    <div class="student-detail-card">
+    <!-- HERO -->
+    <div class="ld-hero">
+      <div class="ld-hero__left">
+        <div class="ld-avatar">
+          {% if lecturer.avatar %}
+            <img src="{{ lecturer.avatar.url }}" alt="{{ lecturer.full_name }}">
+          {% else %}
+            <div class="ld-avatar__placeholder">👤</div>
+          {% endif %}
+        </div>
 
-        <div class="student-detail-avatar">
-            {% if lecturer.avatar %}
-                <img src="{{ lecturer.avatar.url }}" alt="{{ lecturer.full_name }}">
-            {% else %}
-                <span class="avatar-placeholder">👤</span>
+        <div class="ld-title">
+          <h1 class="ld-name">{{ lecturer.full_name }}</h1>
+
+          <div class="ld-sub">
+            {% if lecturer.academic_rank %}
+              <span class="badge badge-main">{{ lecturer.academic_rank }}</span>
             {% endif %}
-        </div>
+            {% if lecturer.degree %}
+              <span class="badge">{{ lecturer.degree }}</span>
+            {% endif %}
+            <span class="badge badge-soft">Giảng viên</span>
+          </div>
 
-        <div class="student-detail-info">
-            <h1>{{ lecturer.full_name }}</h1>
-            <p class="student-role">Giảng viên</p>
-
-            <ul class="student-meta">
-                {% if lecturer.degree %}
-                <li><strong>Học vị:</strong> {{ lecturer.degree }}</li>
-                {% endif %}
-                <li><strong>Khoa:</strong> {{ lecturer.faculty.name }}</li>
-                <li><strong>Email:</strong> {{ lecturer.email|default:"—" }}</li>
-            </ul>
-
+          <div class="ld-backline">
             <a href="{% url 'portal:public-lecturer-list' %}" class="back-link">
-                ← Quay lại danh sách giảng viên
+              ← Quay lại danh sách giảng viên
             </a>
+          </div>
         </div>
+      </div>
 
+      <!-- STATS -->
+      <div class="ld-stats">
+        <div class="stat">
+          <div class="stat__num">{{ projects|length }}</div>
+          <div class="stat__label">ĐỀ TÀI</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num">{{ specialties|length }}</div>
+          <div class="stat__label">CHUYÊN MÔN</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num">{{ languages|length }}</div>
+          <div class="stat__label">NGOẠI NGỮ</div>
+        </div>
+      </div>
     </div>
 
-    <!-- ĐỀ TÀI HƯỚNG DẪN -->
-    <div class="student-topics">
-        <h2>Danh sách đề tài hướng dẫn</h2>
+    <!-- GRID 2 CỘT -->
+    <div class="ld-grid">
 
-        {% if projects %}
-            <ul>
-                {% for p in projects %}
-                    <li>{{ p.name }}</li>
-                {% endfor %}
+      <!-- Thông tin -->
+      <div class="card">
+        <div class="card__title">Thông tin</div>
+
+        <div class="info-list">
+          <div class="info-row">
+            <div class="info-k">Khoa</div>
+            <div class="info-v">{{ lecturer.faculty.name }}</div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-k">Email</div>
+            <div class="info-v">
+              {% if lecturer.email %}
+                <a class="link" href="mailto:{{ lecturer.email }}">{{ lecturer.email }}</a>
+              {% else %}
+                —
+              {% endif %}
+            </div>
+          </div>
+
+          {% if lecturer.phone_number %}
+          <div class="info-row">
+            <div class="info-k">Liên hệ</div>
+            <div class="info-v">{{ lecturer.phone_number }}</div>
+          </div>
+          {% endif %}
+
+          {% if lecturer.degree %}
+          <div class="info-row">
+            <div class="info-k">Học vị</div>
+            <div class="info-v">{{ lecturer.degree }}</div>
+          </div>
+          {% endif %}
+
+          {% if lecturer.academic_rank %}
+          <div class="info-row">
+            <div class="info-k">Chức danh</div>
+            <div class="info-v">{{ lecturer.academic_rank }}</div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Chuyên môn -->
+      <div class="card">
+        <div class="card__title">Chuyên môn</div>
+
+        <div class="section">
+          <div class="section__label">Chuyên môn giảng dạy</div>
+          {% if specialties %}
+            <ul class="chips">
+              {% for s in specialties %}
+                <li class="chip">{{ s.specialty }}</li>
+              {% endfor %}
             </ul>
-        {% else %}
-            <p class="text-muted">
-                Chưa có đề tài hướng dẫn.
-            </p>
-        {% endif %}
+          {% else %}
+            <div class="muted">Chưa cập nhật chuyên môn.</div>
+          {% endif %}
+        </div>
+      </div>
+
     </div>
 
-</div>
+    <!-- Ngoại ngữ -->
+    <div class="card">
+      <div class="card__title">Ngoại ngữ</div>
 
-</body>
-</html>
+      {% if languages %}
+        <div class="lang-list">
+          {% for x in languages %}
+            <div class="lang-row">
+              <div class="lang-name">{{ x.language }}</div>
+              <div class="lang-level">{{ x.level }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="muted">Chưa cập nhật ngoại ngữ.</div>
+      {% endif %}
+    </div>
+
+    <!-- Đề tài hướng dẫn -->
+    <div class="card">
+      <div class="card__title">Danh sách đề tài hướng dẫn</div>
+
+      {% if projects %}
+        <div class="project-list">
+          {% for p in projects %}
+            <a class="project-item" href="{% url 'portal:public-project-detail' p.code %}">
+              <div class="project-title">{{ p.title }}</div>
+              <div class="project-code">{{ p.code }}</div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="muted">Chưa có đề tài hướng dẫn.</div>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
+{% endblock %}

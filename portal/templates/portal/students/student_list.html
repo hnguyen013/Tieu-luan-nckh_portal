@@ -91,7 +91,7 @@
                 <td class="actions">
                     <a href="{% url 'portal:admin-student-edit' s.id %}">Sửa</a>
                     |
-                    <a href="{% url 'portal:admin-student-delete' s.id %}"
+                    <a href="{% url 'portal:admin-student-toggle-active' s.id %}"
                        onclick="return confirm('Xóa sinh viên {{ s.mssv }} - {{ s.full_name }}?');">
                         Xóa
                     </a>

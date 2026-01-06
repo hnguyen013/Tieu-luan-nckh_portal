@@ -6,29 +6,215 @@
 {% block breadcrumb %}Trang chủ / Giảng viên hướng dẫn / {{ title }}{% endblock %}
 
 {% block content %}
-    <form method="post" enctype="multipart/form-data" class="form-vertical">
-        {% csrf_token %}
+<form method="post" enctype="multipart/form-data" class="form-vertical">
+    {% csrf_token %}
 
-        {% if form.non_field_errors %}
+    {% if form.non_field_errors %}
+        <div class="form-errors">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                <div class="field-error">{{ field.errors|striptags }}</div>
+            {% endif %}
+            {% if field.help_text %}
+                <div class="help-text">{{ field.help_text }}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    {# ================= NGOẠI NGỮ ================= #}
+    {% if language_formset %}
+    <div class="admin-form-card" style="margin-top: 14px;" id="languagesCard">
+        <div class="admin-form-title">Ngoại ngữ</div>
+
+        {{ language_formset.management_form }}
+
+        {% if language_formset.non_form_errors %}
             <div class="form-errors">
-                {{ form.non_field_errors }}
+                {{ language_formset.non_form_errors }}
             </div>
         {% endif %}
 
-        {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                    <div class="field-error">{{ field.errors|striptags }}</div>
-                {% endif %}
-                {% if field.help_text %}
-                    <div class="help-text">{{ field.help_text }}</div>
-                {% endif %}
-            </div>
-        {% endfor %}
+        <table class="table" style="margin-top: 10px;">
+            <thead>
+                <tr>
+                    <th style="width: 38%;">Ngoại ngữ</th>
+                    <th style="width: 38%;">Trình độ</th>
+                    <th style="width: 120px;">Xóa</th>
+                </tr>
+            </thead>
+            <tbody id="langFormsetBody">
+                {% for f in language_formset %}
+                    <tr class="lang-row">
+                        <td>
+                            {{ f.language }}
+                            {% if f.language.errors %}
+                                <div class="field-error">{{ f.language.errors|striptags }}</div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ f.level }}
+                            {% if f.level.errors %}
+                                <div class="field-error">{{ f.level.errors|striptags }}</div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if f.instance.pk %}
+                                <label style="font-size: 13px;">
+                                    {{ f.DELETE }} Xóa
+                                </label>
+                            {% else %}
+                                <span class="help-text">—</span>
+                            {% endif %}
+                        </td>
+                        {% if f.id %}{{ f.id }}{% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-        <button type="submit" class="btn-primary">{{ submit_label }}</button>
-        <a href="{% url 'portal:admin-lecturer-list' %}" class="btn-secondary">Hủy</a>
-    </form>
+        <button type="button" class="btn-secondary" id="addLangRow">+ Thêm ngoại ngữ</button>
+    </div>
+    {% endif %}
+
+    {# ================= CHUYÊN MÔN GIẢNG DẠY ================= #}
+    {% if specialty_formset %}
+    <div class="admin-form-card" style="margin-top: 14px;" id="specialtiesCard">
+        <div class="admin-form-title">Chuyên môn giảng dạy</div>
+
+        {{ specialty_formset.management_form }}
+
+        {% if specialty_formset.non_form_errors %}
+            <div class="form-errors">
+                {{ specialty_formset.non_form_errors }}
+            </div>
+        {% endif %}
+
+        <table class="table" style="margin-top: 10px;">
+            <thead>
+                <tr>
+                    <th>Chuyên môn</th>
+                    <th style="width: 120px;">Xóa</th>
+                </tr>
+            </thead>
+            <tbody id="specFormsetBody">
+                {% for f in specialty_formset %}
+                    <tr class="spec-row">
+                        <td>
+                            {{ f.specialty }}
+                            {% if f.specialty.errors %}
+                                <div class="field-error">{{ f.specialty.errors|striptags }}</div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if f.instance.pk %}
+                                <label style="font-size: 13px;">
+                                    {{ f.DELETE }} Xóa
+                                </label>
+                            {% else %}
+                                <span class="help-text">—</span>
+                            {% endif %}
+                        </td>
+                        {% if f.id %}{{ f.id }}{% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="button" class="btn-secondary" id="addSpecRow">+ Thêm chuyên môn</button>
+    </div>
+    {% endif %}
+
+    <button type="submit" class="btn-primary">{{ submit_label }}</button>
+    <a href="{% url 'portal:admin-lecturer-list' %}" class="btn-secondary">Hủy</a>
+</form>
+
+<script>
+(function () {
+    function getPrefixFromCard(cardEl) {
+        // tìm input name="xxx-TOTAL_FORMS" trong card
+        const total = cardEl ? cardEl.querySelector('input[name$="-TOTAL_FORMS"]') : null;
+        return total ? total.name.replace("-TOTAL_FORMS", "") : null;
+    }
+
+    function addRow(btnId, bodyId, cardId, fieldsBuilder) {
+        const btn = document.getElementById(btnId);
+        const body = document.getElementById(bodyId);
+        const card = document.getElementById(cardId);
+        if (!btn || !body || !card) return;
+
+        const prefix = getPrefixFromCard(card);
+        if (!prefix) return;
+
+        const totalFormsInput = card.querySelector(`input[name="${prefix}-TOTAL_FORMS"]`);
+        if (!totalFormsInput) return;
+
+        btn.addEventListener("click", function () {
+            const index = parseInt(totalFormsInput.value, 10);
+
+            const tr = document.createElement("tr");
+            tr.className = btnId === "addLangRow" ? "lang-row" : "spec-row";
+
+            fieldsBuilder(tr, prefix, index);
+
+            body.appendChild(tr);
+            totalFormsInput.value = index + 1;
+        });
+    }
+
+    // add language row
+    addRow("addLangRow", "langFormsetBody", "languagesCard", function (tr, prefix, index) {
+        const tdLang = document.createElement("td");
+        const tdLevel = document.createElement("td");
+        const tdDel = document.createElement("td");
+
+        const lang = document.createElement("input");
+        lang.type = "text";
+        lang.name = `${prefix}-${index}-language`;
+        lang.id = `id_${prefix}-${index}-language`;
+        lang.placeholder = "VD: English / Japanese";
+        lang.className = "textinput";
+
+        const level = document.createElement("input");
+        level.type = "text";
+        level.name = `${prefix}-${index}-level`;
+        level.id = `id_${prefix}-${index}-level`;
+        level.placeholder = "VD: B2 / N3 / IELTS 6.5";
+        level.className = "textinput";
+
+        tdLang.appendChild(lang);
+        tdLevel.appendChild(level);
+        tdDel.innerHTML = '<span class="help-text">—</span>';
+
+        tr.appendChild(tdLang);
+        tr.appendChild(tdLevel);
+        tr.appendChild(tdDel);
+    });
+
+    // add specialty row
+    addRow("addSpecRow", "specFormsetBody", "specialtiesCard", function (tr, prefix, index) {
+        const tdSpec = document.createElement("td");
+        const tdDel = document.createElement("td");
+
+        const spec = document.createElement("input");
+        spec.type = "text";
+        spec.name = `${prefix}-${index}-specialty`;
+        spec.id = `id_${prefix}-${index}-specialty`;
+        spec.placeholder = "VD: AI / Mạng máy tính / CSDL ...";
+        spec.className = "textinput";
+
+        tdSpec.appendChild(spec);
+        tdDel.innerHTML = '<span class="help-text">—</span>';
+
+        tr.appendChild(tdSpec);
+        tr.appendChild(tdDel);
+    });
+})();
+</script>
 {% endblock %}
