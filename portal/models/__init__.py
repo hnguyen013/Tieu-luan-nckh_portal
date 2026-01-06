@@ -8,6 +8,7 @@ from .lecturer import Lecturer
 from .lecturer_language import LecturerLanguage
 from .lecturer_specialty import LecturerSpecialty
 from .research_field import ResearchField
+from .councils import Council, CouncilMember
 from .projects import (
     Project,
     ProjectStudent,
@@ -32,4 +33,6 @@ __all__ = [
     "ResearchField",
     "LecturerLanguage",
     "LecturerSpecialty",
+    "Council",
+    "CouncilMember",
 ]

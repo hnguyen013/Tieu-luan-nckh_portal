@@ -284,7 +284,103 @@
             </div>
         {% endif %}
     </div>
+{% if project and project.status == 'ACCEPTED' and council_form and member_formset %}
+    <!-- ================= THÔNG TIN HỘI ĐỒNG CHẤM ================= -->
+    <div class="admin-form-card">
+        <div class="admin-form-title">Thông tin hội đồng chấm</div>
 
+        {% if council_form.non_field_errors %}
+            <div class="form-errors">
+                {{ council_form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="{{ council_form.council_title.id_for_label }}">
+                Tên hội đồng <span class="required">*</span>
+            </label>
+            {{ council_form.council_title }}
+            {% if council_form.council_title.errors %}
+                <div class="field-error">{{ council_form.council_title.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ council_form.grading_date.id_for_label }}">
+                Ngày chấm
+            </label>
+            {{ council_form.grading_date }}
+            {% if council_form.grading_date.errors %}
+                <div class="field-error">{{ council_form.grading_date.errors|striptags }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ council_form.notes.id_for_label }}">
+                Ghi chú
+            </label>
+            {{ council_form.notes }}
+            {% if council_form.notes.errors %}
+                <div class="field-error">{{ council_form.notes.errors|striptags }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ================= THÀNH VIÊN HỘI ĐỒNG & ĐIỂM ================= -->
+    <div class="admin-form-card">
+        <div class="admin-form-title">Thành viên hội đồng & điểm</div>
+
+        {{ member_formset.non_form_errors }}
+        {{ member_formset.management_form }}
+
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th style="width: 35%;">Giảng viên</th>
+                    <th style="width: 30%;">Vai trò</th>
+                    <th style="width: 20%;">Điểm thành phần</th>
+                    <th style="width: 10%;">Xóa</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in member_formset %}
+                    <tr>
+                        <td>
+                            {{ f.lecturer }}
+                            {% if f.lecturer.errors %}
+                                <div class="field-error">{{ f.lecturer.errors|striptags }}</div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ f.role }}
+                            {% if f.role.errors %}
+                                <div class="field-error">{{ f.role.errors|striptags }}</div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ f.component_score }}
+                            {% if f.component_score.errors %}
+                                <div class="field-error">{{ f.component_score.errors|striptags }}</div>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if f.instance.pk %}
+                                {{ f.DELETE }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="help-text">
+            • Mỗi giảng viên chỉ được xuất hiện 1 lần trong hội đồng<br>
+            • Điểm từ 0 đến 10 (có thể để trống nếu chưa chấm)
+        </div>
+    </div>
+{% endif %}
     <!-- ================= ACTION ================= -->
     <button type="submit" class="btn-primary">
         {{ submit_label|default:"Lưu đề tài" }}
